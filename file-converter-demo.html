@@ -153,26 +153,9 @@ input, select, textarea { font-family: inherit; color: inherit; }
 .nav-item .count {
   margin-left: auto; font-size: 11px; background: var(--bg-3);
   padding: 2px 7px; border-radius: 999px; color: var(--text-dim);
+  display: none;
 }
 .nav-item.active .count { background: rgba(245,158,11,.2); color: var(--amber-2); }
-
-.preset-card {
-  margin-top: 10px; padding: 14px;
-  border-radius: 14px; border: 1px solid var(--line);
-  background: linear-gradient(160deg, var(--bg-2), var(--bg-1));
-}
-.preset-card h4 { font-size: 12px; color: var(--text); margin-bottom: 10px; display:flex; align-items:center; gap: 6px; }
-.preset-card h4::before{content:""; width:6px; height:6px; border-radius:999px; background: var(--amber);}
-.preset-list { display: flex; flex-direction: column; gap: 6px; }
-.preset {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 8px 10px; border-radius: 8px;
-  font-size: 12px; color: var(--text-dim);
-  border: 1px solid var(--line);
-  transition: all .15s ease;
-}
-.preset:hover { background: var(--bg-3); color: var(--text); border-color: var(--line-2); }
-.preset .tag { font-size: 10.5px; color: var(--text-mute); padding: 2px 6px; background: var(--bg-1); border-radius: 6px; border: 1px solid var(--line); }
 
 /* =========================================================
    MAIN
@@ -521,7 +504,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
 /* Audio editor visual */
 .waveform {
   height: 80px; border-radius: 10px; border: 1px solid var(--line);
-  background: linear-gradient(180deg, #0f141d, #0b0e15);
+  background: var(--bg-2);
   position: relative; overflow: hidden;
   display: flex; align-items: center; justify-content: space-around; padding: 0 8px;
 }
@@ -529,6 +512,52 @@ input, select, textarea { font-family: inherit; color: inherit; }
   width: 3px; background: linear-gradient(180deg, var(--cyan), var(--amber));
   border-radius: 2px; opacity: .85;
 }
+
+/* Audio-Video Mix tracks */
+.mix-strip {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg-2);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mix-track-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0 4px;
+}
+.mix-track {
+  height: 40px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.mix-clip {
+  position: absolute;
+  top: 4px;
+  height: calc(100% - 8px);
+  border: 1px solid;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--text-dim);
+  cursor: grab;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.15s;
+}
+.mix-clip:hover { opacity: 0.85; }
 
 /* Scrollbars */
 *::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -890,10 +919,10 @@ body.theme-amber::before {
   <aside class="sidebar">
     <div class="nav-group-title">格式转换</div>
     <nav class="nav">
-      <button class="nav-item active" data-tab="image"><svg class="icon icon-amber"><use href="#i-img"/></svg>图片转换<span class="count">11</span></button>
-      <button class="nav-item" data-tab="audio"><svg class="icon icon-cyan"><use href="#i-audio"/></svg>音频转换<span class="count">9</span></button>
-      <button class="nav-item" data-tab="video"><svg class="icon icon-violet"><use href="#i-video"/></svg>视频转换<span class="count">10</span></button>
-      <button class="nav-item" data-tab="document"><svg class="icon icon-green"><use href="#i-doc"/></svg>文档转换<span class="count">8</span></button>
+      <button class="nav-item active" data-tab="image"><svg class="icon icon-amber"><use href="#i-img"/></svg>图片转换<span class="count" id="cnt-image">0</span></button>
+      <button class="nav-item" data-tab="audio"><svg class="icon icon-cyan"><use href="#i-audio"/></svg>音频转换<span class="count" id="cnt-audio">0</span></button>
+      <button class="nav-item" data-tab="video"><svg class="icon icon-violet"><use href="#i-video"/></svg>视频转换<span class="count" id="cnt-video">0</span></button>
+      <button class="nav-item" data-tab="document"><svg class="icon icon-green"><use href="#i-doc"/></svg>文档转换<span class="count" id="cnt-document">0</span></button>
     </nav>
 
     <div class="nav-group-title">剪辑编辑</div>
@@ -903,15 +932,7 @@ body.theme-amber::before {
       <button class="nav-item" data-tab="mix"><svg class="icon icon-violet"><use href="#i-mix"/></svg>音视频混合</button>
     </nav>
 
-    <div class="preset-card">
-      <h4>快速预设</h4>
-      <div class="preset-list">
-        <button class="preset"><svg class="icon icon-sm icon-amber"><use href="#i-phone"/></svg> 短视频平台<span class="tag">1080p</span></button>
-        <button class="preset"><svg class="icon icon-sm icon-amber"><use href="#i-brief"/></svg> 办公标准<span class="tag">PDF</span></button>
-        <button class="preset"><svg class="icon icon-sm icon-amber"><use href="#i-spark"/></svg> 高清无损<span class="tag">H.265</span></button>
-        <button class="preset"><svg class="icon icon-sm icon-amber"><use href="#i-bolt"/></svg> 极速压缩<span class="tag">75%</span></button>
-      </div>
-    </div>
+
   </aside>
 
   <!-- =============== MAIN =============== -->
@@ -1329,6 +1350,79 @@ body.theme-amber::before {
       </div>
     </section>
 
+    <!-- ========== AUDIO-VIDEO MIX PANEL ========== -->
+    <section class="panel" id="panel-edit-mix">
+      <div class="card" style="margin-bottom: 16px;">
+        <div class="editor-toolbar">
+          <button class="tbtn"><svg class="icon icon-sm"><use href="#i-play"/></svg> 预览</button>
+          <button class="tbtn primary"><svg class="icon icon-sm"><use href="#i-download"/></svg> 导出</button>
+          <div class="tool-sep"></div>
+          <button class="tbtn"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 重置</button>
+        </div>
+        <div class="mix-strip" id="mix-strip">
+          <div class="mix-track-label">视频轨道</div>
+          <div class="mix-track" id="mix-track-vid">
+            <div class="mix-clip" style="width:60%;background:rgba(167,139,250,.2);border-color:var(--violet);">
+              <span>product_demo.mp4</span>
+            </div>
+          </div>
+          <div class="mix-track-label">音频轨道</div>
+          <div class="mix-track" id="mix-track-aud">
+            <div class="mix-clip" style="width:40%;background:rgba(34,211,238,.2);border-color:var(--cyan);">
+              <span>main_theme.mp3</span>
+            </div>
+            <div class="mix-clip" style="width:25%;left:42%;background:rgba(34,211,238,.2);border-color:var(--cyan);">
+              <span>interview_clip.wav</span>
+            </div>
+          </div>
+          <div class="mix-track-label">字幕轨道</div>
+          <div class="mix-track" id="mix-track-sub" style="min-height:32px;">
+            <div class="mix-clip" style="width:15%;left:5%;background:rgba(34,197,94,.2);border-color:var(--green);">
+              <span>字幕.srt</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px;align-items:center;font-size:12px;color:var(--text-mute);">
+          <svg class="icon icon-sm"><use href="#i-info"/></svg>
+          <span>拖拽轨道上的片段可调整时长 / 顺序；点击 + 按钮添加新轨道。</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3><svg class="icon icon-sm icon-violet"><use href="#i-video"/></svg> 视频轨道设置</h3>
+          <div class="param-group"><label>视频文件</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-vid').click()">+ 添加视频文件</div></div>
+          <input type="file" id="file-picker-mix-vid" style="display:none" accept="video/*" />
+          <div class="param-group"><label>音量</label><div class="slider-wrap"><input type="range" class="slider" min="0" max="200" value="100" /><div class="slider-val">100</div></div></div>
+          <div class="param-switch"><span>保留原视频音轨</span><div class="switch"></div></div>
+          <div class="param-switch"><span>静音原视频</span><div class="switch on"></div></div>
+        </div>
+        <div class="card">
+          <h3><svg class="icon icon-sm icon-cyan"><use href="#i-audio"/></svg> 音频轨道设置</h3>
+          <div class="param-group"><label>背景音乐</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-aud').click()">+ 添加音频文件</div></div>
+          <input type="file" id="file-picker-mix-aud" style="display:none" accept="audio/*" />
+          <div class="param-group"><label>背景音量</label><div class="slider-wrap"><input type="range" class="slider" min="0" max="200" value="60" /><div class="slider-val">60</div></div></div>
+          <div class="param-group"><label>淡入淡出</label><div class="segment"><button>关闭</button><button class="active">1s</button><button>2s</button><button>3s</button></div></div>
+          <div class="param-switch"><span>循环播放背景音乐</span><div class="switch on"></div></div>
+        </div>
+        <div class="card">
+          <h3><svg class="icon icon-sm icon-green"><use href="#i-doc"/></svg> 字幕轨道设置</h3>
+          <div class="param-group"><label>字幕文件</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-sub').click()">+ 添加字幕文件 (.srt / .ass)</div></div>
+          <input type="file" id="file-picker-mix-sub" style="display:none" accept=".srt,.ass,.ssa,.vtt" />
+          <div class="param-group"><label>字幕样式</label><select class="param-input"><option>系统默认</option><option>白底黑字</option><option>黑底白字</option><option>半透明背景</option></select></div>
+          <div class="param-switch"><span>字幕位置：底部居中</span><div class="switch on"></div></div>
+        </div>
+        <div class="card">
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 混流输出设置</h3>
+          <div class="param-group"><label>封装格式</label><select class="param-input"><option selected>MP4 · H.264 + AAC</option><option>MOV · H.265</option><option>MKV</option><option>WebM · VP9</option></select></div>
+          <div class="param-group"><label>分辨率</label><select class="param-input"><option>1920×1080</option><option selected>1280×720</option><option>3840×2160</option><option>原始分辨率</option></select></div>
+          <div class="param-group"><label>帧率</label><select class="param-input"><option>24 fps</option><option selected>30 fps</option><option>60 fps</option></select></div>
+          <div class="param-group"><label>码率控制</label><div class="segment"><button>CBR</button><button class="active">VBR</button><button>CRF</button></div></div>
+          <button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="pushTask('混流合成 product_final.mp4', 22);"><svg class="icon icon-sm"><use href="#i-bolt"/></svg> 开始混流</button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- =============== RIGHT BAR (TASKS) =============== -->
@@ -1341,7 +1435,7 @@ body.theme-amber::before {
     <div class="task-list" id="task-list"></div>
 
     <div class="rb-head" style="margin-top: 8px;">
-      <h3>🗒 历史记录</h3>
+      <h3><svg class="icon icon-sm"><use href="#i-history"/></svg> 历史记录</h3>
     </div>
     <div class="history" id="history"></div>
   </aside>
@@ -1822,6 +1916,7 @@ function pushTask(name, durationSec = 12) {
   tasks.push(t);
   renderTasks();
   updateTopStat();
+  updateNavBadges();
   if (prefs.keepTasks) saveStore(STORE_KEYS.tasks, tasks);
 }
 
@@ -1896,6 +1991,7 @@ setInterval(() => {
   if (changed) {
     renderTasks();
     updateTopStat();
+    updateNavBadges();
     if (prefs.keepTasks) saveStore(STORE_KEYS.tasks, tasks);
     saveStore(STORE_KEYS.stats, stats);
   }
@@ -1924,9 +2020,30 @@ function updateTopStat() {
   }
 }
 
+function updateNavBadges() {
+  // 按类型统计等待中/处理中的任务数
+  const counts = { image: 0, audio: 0, video: 0, document: 0 };
+  tasks.forEach(t => {
+    if (t.status === 'run' || t.status === 'wait') {
+      const name = t.name;
+      if (name.includes('图片') || name.includes('.jpg') || name.includes('.png') || name.includes('.webp') || name.includes('.gif')) counts.image++;
+      else if (name.includes('音频') || name.includes('.mp3') || name.includes('.wav') || name.includes('.flac') || name.includes('.m4a')) counts.audio++;
+      else if (name.includes('视频') || name.includes('.mp4') || name.includes('.mov') || name.includes('.avi') || name.includes('混流') || name.includes('合并')) counts.video++;
+      else counts.document++;
+    }
+  });
+  ['image', 'audio', 'video', 'document'].forEach(k => {
+    const el = document.getElementById('cnt-' + k);
+    if (el) {
+      el.textContent = counts[k] || 0;
+      el.style.display = counts[k] ? 'inline-block' : 'none';
+    }
+  });
+}
+
 document.getElementById('clear-tasks').addEventListener('click', () => {
   tasks.length = 0;
-  renderTasks(); updateTopStat();
+  renderTasks(); updateTopStat(); updateNavBadges();
   if (prefs.keepTasks) saveStore(STORE_KEYS.tasks, tasks);
   showToast('已清空任务队列');
 });
@@ -2119,7 +2236,7 @@ document.querySelectorAll('[data-action]').forEach(btn => {
           const list = document.getElementById('files-' + type);
           if (list) list.innerHTML = '';
         });
-        renderTasks(); renderHistory(); updateTopStat(); applyTheme(prefs.theme);
+        renderTasks(); renderHistory(); updateTopStat(); updateNavBadges(); applyTheme(prefs.theme);
         showToast('已重置为全新状态');
         closeModal(document.querySelector('#modal-settings'));
       });
@@ -2135,6 +2252,7 @@ restoreFiles();
 renderTasks();
 renderHistory();
 updateTopStat();
+updateNavBadges();
 
 /* 首次进入（完全空白）的提示 */
 if (!history.length && !tasks.length && !stats.total) {
