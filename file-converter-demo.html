@@ -34,10 +34,7 @@ html, body { height: 100%; }
 body {
   font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   color: var(--text);
-  background:
-    radial-gradient(1100px 700px at 8% -10%, rgba(245,158,11,.14), transparent 60%),
-    radial-gradient(900px 600px at 110% 10%, rgba(34,211,238,.10), transparent 55%),
-    linear-gradient(180deg, #0a0c11 0%, #0b0d12 100%);
+  background: var(--bg);
   min-height: 100%;
   overflow-x: hidden;
 }
@@ -602,9 +599,224 @@ input, select, textarea { font-family: inherit; color: inherit; }
   pointer-events: none;
 }
 
+/* ===================== Theme Variables ===================== */
+/* 深色主题 (默认) */
+:root, body.theme-dark {
+  --bg: #0f1115;
+  --bg-2: #151822;
+  --panel: #1a1f2b;
+  --panel-2: #1e2432;
+  --border: #262c3b;
+  --text: #e6e9f2;
+  --text-dim: #a0a6b8;
+  --text-mute: #6b7289;
+  --amber: #f59e0b;
+  --amber-2: #ffb74d;
+  --amber-soft: rgba(245, 158, 11, 0.14);
+  --success: #10b981;
+  --danger: #ef4444;
+  --info: #60a5fa;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+/* 浅色主题 */
+body.theme-light {
+  --bg: #f5f7fb;
+  --bg-2: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #f7f9fc;
+  --border: #e3e8f0;
+  --text: #1f2937;
+  --text-dim: #4b5563;
+  --text-mute: #8b95a8;
+  --amber: #ea8a00;
+  --amber-2: #ff9f43;
+  --amber-soft: rgba(234, 138, 0, 0.12);
+  --success: #059669;
+  --danger: #dc2626;
+  --info: #2563eb;
+  --shadow: 0 8px 24px rgba(30, 41, 59, 0.08);
+}
+
+/* 琥珀主题 */
+body.theme-amber {
+  --bg: #1a120b;
+  --bg-2: #271b0f;
+  --panel: #32241a;
+  --panel-2: #3d2c1e;
+  --border: #5a4028;
+  --text: #fff2d8;
+  --text-dim: #d9b98a;
+  --text-mute: #a07a55;
+  --amber: #ffb956;
+  --amber-2: #ffd59e;
+  --amber-soft: rgba(255, 185, 86, 0.22);
+  --success: #34d399;
+  --danger: #f87171;
+  --info: #93c5fd;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* 应用到已存在的元素（确保变量传递） */
+body.theme-light .sidebar,
+body.theme-light .main,
+body.theme-light .right-bar { background: var(--bg-2); border-color: var(--border); }
+body.theme-amber .sidebar,
+body.theme-amber .main,
+body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--border); }
+
+/* ===================== Modal 对话框 ===================== */
+.modal {
+  position: fixed; inset: 0; z-index: 999;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.18s ease;
+}
+.modal.show { opacity: 1; pointer-events: auto; }
+.modal-mask {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+.modal-body {
+  position: relative; z-index: 1;
+  width: min(640px, 92vw);
+  max-height: 88vh;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  display: flex; flex-direction: column;
+  transform: translateY(8px); transition: transform 0.2s ease;
+}
+.modal.show .modal-body { transform: translateY(0); }
+.modal-sm { width: min(440px, 92vw); }
+.modal-head {
+  padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.modal-head h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.modal-content { padding: 20px; overflow-y: auto; font-size: 14px; }
+.modal-foot {
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* ===================== 对话框分区 & 标题 ===================== */
+.dlg-section + .dlg-section { margin-top: 22px; }
+.dlg-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-mute);
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 12px;
+}
+
+/* ===================== 主题选择器 ===================== */
+.theme-picker {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+}
+.theme-card {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--panel-2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+  color: var(--text-dim);
+}
+.theme-card:hover { border-color: var(--amber); color: var(--text); transform: translateY(-1px); }
+.theme-card.active {
+  border-color: var(--amber);
+  color: var(--text);
+  background: var(--amber-soft);
+  box-shadow: 0 0 0 2px var(--amber-soft);
+}
+.theme-preview {
+  height: 72px; border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+}
+.theme-preview-dark { background: linear-gradient(180deg, #1e2432 0%, #0f1115 100%); }
+.theme-preview-light { background: linear-gradient(180deg, #ffffff 0%, #eef1f6 100%); }
+.theme-preview-amber { background: linear-gradient(180deg, #3d2c1e 0%, #1a120b 100%); }
+.tp-bar {
+  height: 12px; width: 100%;
+  background: linear-gradient(90deg, var(--amber) 0%, var(--amber-2) 100%);
+  opacity: 0.8;
+}
+.tp-body { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.tp-blk {
+  height: 8px;
+  background: var(--border);
+  border-radius: 3px;
+  opacity: 0.8;
+}
+.tp-blk.tp-lg { height: 14px; width: 70%; opacity: 0.6; }
+.theme-name { text-align: center; font-size: 12px; font-weight: 600; }
+
+/* ===================== Toggle Row (开关行) ===================== */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.toggle-row:last-child { margin-bottom: 0; }
+.toggle-label { font-size: 14px; font-weight: 500; color: var(--text); }
+.toggle-sub { font-size: 12px; color: var(--text-mute); margin-top: 2px; }
+
+/* ===================== 危险操作按钮 ===================== */
+.danger-actions {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+}
+.btn-danger {
+  background: transparent;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+}
+.btn-danger:hover {
+  background: var(--danger);
+  color: white;
+}
+.btn-primary.btn-danger:hover { background: var(--danger); }
+
+/* ===================== Toast ===================== */
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-16px);
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; z-index: 1000;
+  opacity: 0; pointer-events: none;
+  transition: all 0.2s ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.toast .tick { color: var(--amber); display: inline-flex; align-items: center; }
+
+/* ===================== 小屏自适应 ===================== */
+@media (max-width: 960px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  .right-bar { border-left: none; border-top: 1px solid var(--border); }
+  .danger-actions { grid-template-columns: 1fr; }
+  .theme-picker { grid-template-columns: 1fr; }
+}
 </style>
 </head>
-<body>
+<body class="theme-dark">
 
 <!-- SVG 图标库（内联 sprite，无外部依赖） -->
 <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute;visibility:hidden" aria-hidden="true">
@@ -645,6 +857,9 @@ input, select, textarea { font-family: inherit; color: inherit; }
     <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
     <symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></symbol>
     <symbol id="i-doc-b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></symbol>
+    <symbol id="i-cog" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h.1a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v.1a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v4h1"/></symbol>
   </defs>
 </svg>
 
@@ -704,15 +919,16 @@ input, select, textarea { font-family: inherit; color: inherit; }
       <div class="quick">
         <button class="btn btn-sm"><svg class="icon icon-sm"><use href="#i-upload"/></svg> 批量导入</button>
         <button class="btn btn-sm"><svg class="icon icon-sm"><use href="#i-cog"/></svg> 设置</button>
+        <button class="btn btn-sm" id="btn-settings-dlg"><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 偏好设置</button>
       </div>
     </div>
 
     <!-- Stats -->
     <section class="stats-row">
-      <div class="stat s1"><div class="k">已转换</div><div class="v">2,847</div><div class="sub">本月 +312</div></div>
-      <div class="stat s2"><div class="k">节省空间</div><div class="v">48.6 GB</div><div class="sub">平均压缩 62%</div></div>
-      <div class="stat s3"><div class="k">成功率</div><div class="v">99.4%</div><div class="sub">自动重试 12 次</div></div>
-      <div class="stat s4"><div class="k">进行中</div><div class="v" id="live-count">4</div><div class="sub" id="live-sub">2 排队 · 2 运行</div></div>
+      <div class="stat s1"><div class="k">已转换</div><div class="v" id="stat-total">0</div><div class="sub" id="stat-month">本月 +0</div></div>
+      <div class="stat s2"><div class="k">节省空间</div><div class="v" id="stat-space">0 MB</div><div class="sub" id="stat-cmp">平均压缩 0%</div></div>
+      <div class="stat s3"><div class="k">成功率</div><div class="v" id="stat-rate">—</div><div class="sub" id="stat-retry">无失败任务</div></div>
+      <div class="stat s4"><div class="k">进行中</div><div class="v" id="live-count">0</div><div class="sub" id="live-sub">0 排队 · 0 运行</div></div>
     </section>
 
     <!-- Category Tabs -->
@@ -1131,302 +1347,713 @@ input, select, textarea { font-family: inherit; color: inherit; }
 <!-- Toast -->
 <div class="toast" id="toast"><span class="tick"><svg class="icon icon-sm"><use href="#i-check"/></svg></span><span id="toast-text">已添加到任务队列</span></div>
 
+<!-- Settings Modal -->
+<div class="modal" id="modal-settings">
+  <div class="modal-mask"></div>
+  <div class="modal-body">
+    <div class="modal-head">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <svg class="icon icon-amber"><use href="#i-cog"/></svg>
+        <h3>偏好设置</h3>
+      </div>
+      <button class="icon-btn" data-close-dlg><svg class="icon icon-sm"><use href="#i-clear"/></svg></button>
+    </div>
+    <div class="modal-content">
+
+      <div class="dlg-section">
+        <div class="dlg-section-title"><svg class="icon icon-sm icon-amber"><use href="#i-bolt"/></svg> 主题外观</div>
+        <div class="theme-picker" id="theme-picker">
+          <button class="theme-card active" data-theme="dark">
+            <div class="theme-preview theme-preview-dark">
+              <div class="tp-bar"></div>
+              <div class="tp-body"><div class="tp-blk"></div><div class="tp-blk tp-lg"></div></div>
+            </div>
+            <div class="theme-name">深色主题</div>
+          </button>
+          <button class="theme-card" data-theme="light">
+            <div class="theme-preview theme-preview-light">
+              <div class="tp-bar"></div>
+              <div class="tp-body"><div class="tp-blk"></div><div class="tp-blk tp-lg"></div></div>
+            </div>
+            <div class="theme-name">浅色主题</div>
+          </button>
+          <button class="theme-card" data-theme="amber">
+            <div class="theme-preview theme-preview-amber">
+              <div class="tp-bar"></div>
+              <div class="tp-body"><div class="tp-blk"></div><div class="tp-blk tp-lg"></div></div>
+            </div>
+            <div class="theme-name">琥珀主题</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="dlg-section">
+        <div class="dlg-section-title"><svg class="icon icon-sm icon-amber"><use href="#i-history"/></svg> 数据保留策略</div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">保留转换历史记录</div>
+            <div class="toggle-sub">关闭后，新转换将不会追加到历史记录</div>
+          </div>
+          <div class="switch on" data-toggle="keepHistory"></div>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">保留任务队列（刷新后继续）</div>
+            <div class="toggle-sub">正在运行/等待中的任务会被保存，并在刷新后继续模拟推进</div>
+          </div>
+          <div class="switch on" data-toggle="keepTasks"></div>
+        </div>
+
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">页面刷新后自动保留上传文件</div>
+            <div class="toggle-sub">在各转换标签下已添加但未开始转换的文件</div>
+          </div>
+          <div class="switch on" data-toggle="keepFiles"></div>
+        </div>
+      </div>
+
+      <div class="dlg-section">
+        <div class="dlg-section-title"><svg class="icon icon-sm icon-amber"><use href="#i-trash"/></svg> 清除数据</div>
+        <div class="danger-actions">
+          <button class="btn btn-sm btn-danger" data-action="clearHistory">清除历史记录</button>
+          <button class="btn btn-sm btn-danger" data-action="clearTasks">清除任务队列</button>
+          <button class="btn btn-sm btn-danger" data-action="clearFiles">清除上传文件</button>
+          <button class="btn btn-sm btn-danger" data-action="clearAll">重置全部数据</button>
+        </div>
+        <div class="hint" style="margin-top:12px;">仅影响本浏览器本地存储的数据，不会影响任何真实文件。</div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <span style="font-size:12px; color: var(--text-mute);">变更自动保存 · 无需手动确认</span>
+      <button class="btn btn-primary btn-sm" data-close-dlg><svg class="icon icon-sm"><use href="#i-check"/></svg> 完成</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="modal" id="modal-confirm">
+  <div class="modal-mask"></div>
+  <div class="modal-body modal-sm">
+    <div class="modal-head">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <svg class="icon icon-amber"><use href="#i-info"/></svg>
+        <h3 id="confirm-title">确认操作</h3>
+      </div>
+      <button class="icon-btn" data-close-dlg><svg class="icon icon-sm"><use href="#i-clear"/></svg></button>
+    </div>
+    <div class="modal-content">
+      <div id="confirm-message" style="font-size: 14px; line-height: 1.6; color: var(--text-dim);">确定要执行此操作吗？</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-sm" data-close-dlg>取消</button>
+      <button class="btn btn-primary btn-sm btn-danger" id="confirm-ok">确认</button>
+    </div>
+  </div>
+</div>
+
 <!-- =============== JAVASCRIPT =============== -->
 <script>
-  /* ---------------- Tab switching ---------------- */
-  const tabs = document.querySelectorAll('.tab');
-  const panels = document.querySelectorAll('.panel');
-  const navItems = document.querySelectorAll('.nav-item[data-tab]');
+/* ================================================================
+ * 数据存储层 · localStorage
+ * ================================================================ */
+const STORE_KEYS = {
+  prefs:   'ff.prefs',         // 主题、开关偏好
+  history: 'ff.history',       // 转换历史 { name, time, size, ts }
+  tasks:   'ff.tasks',         // 任务队列 { id, name, status, progress, ... }
+  files:   'ff.files',         // 已添加但未转换的文件 { type, name, size, meta, fmt }
+  stats:   'ff.stats'          // 全局累计 { total, ok, fail, savedBytes, firstTs }
+};
 
-  function switchTab(target) {
-    tabs.forEach(t => t.classList.toggle('active', t.dataset.panel === target));
-    panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + target));
-    navItems.forEach(n => n.classList.toggle('active', n.dataset.tab === target));
-  }
-  tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.panel)));
-  navItems.forEach(n => n.addEventListener('click', () => switchTab(n.dataset.tab)));
+function loadStore(key, fallback) {
+  try {
+    const v = localStorage.getItem(key);
+    if (!v) return fallback;
+    return JSON.parse(v);
+  } catch (e) { return fallback; }
+}
+function saveStore(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); }
+  catch (e) { /* storage unavailable, ignore */ }
+}
 
-  /* ---------------- Switches ---------------- */
-  document.querySelectorAll('.switch').forEach(sw => {
-    sw.addEventListener('click', e => e.currentTarget.classList.toggle('on'));
+/* ------- Preference defaults ------- */
+const DEFAULT_PREFS = {
+  theme: 'dark',              // dark | light | amber
+  keepHistory: true,
+  keepTasks:   true,
+  keepFiles:   true
+};
+let prefs = Object.assign({}, DEFAULT_PREFS, loadStore(STORE_KEYS.prefs, {}));
+let history = loadStore(STORE_KEYS.history, []);
+let tasks   = loadStore(STORE_KEYS.tasks, []);
+let files   = loadStore(STORE_KEYS.files, { img: [], aud: [], vid: [], doc: [] });
+let stats   = loadStore(STORE_KEYS.stats, { total: 0, ok: 0, fail: 0, savedBytes: 0, firstTs: 0, monthTotal: 0 });
+
+/* ================================================================
+ * 主题系统
+ * ================================================================ */
+function applyTheme(theme) {
+  const body = document.body;
+  body.classList.remove('theme-dark', 'theme-light', 'theme-amber');
+  body.classList.add('theme-' + theme);
+  // update picker highlight
+  document.querySelectorAll('#theme-picker .theme-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.theme === theme);
   });
+  prefs.theme = theme;
+  saveStore(STORE_KEYS.prefs, prefs);
+}
 
-  /* ---------------- Segment groups ---------------- */
-  document.querySelectorAll('.segment').forEach(seg => {
-    seg.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        seg.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-  });
+/* ================================================================
+ * 时间格式化工具
+ * ================================================================ */
+function relTime(ts) {
+  const diff = (Date.now() - ts) / 1000;
+  if (diff < 60) return '刚刚';
+  if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
+  if (diff < 86400) return Math.floor(diff / 3600) + ' 小时前';
+  if (diff < 86400 * 7) return Math.floor(diff / 86400) + ' 天前';
+  const d = new Date(ts);
+  return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
+}
 
-  /* ---------------- Sliders live label ---------------- */
-  const bindSlider = (id, valId, suffix = '') => {
-    const el = document.getElementById(id); if (!el) return;
-    const v1 = document.getElementById(valId);
-    const v2 = document.getElementById(valId + '2');
-    const update = () => { if (v1) v1.textContent = el.value + suffix; if (v2) v2.textContent = el.value + suffix; };
-    el.addEventListener('input', update);
-  };
-  bindSlider('img-quality', 'img-qv');
-  bindSlider('aud-bps', 'aud-bv');
-  bindSlider('vid-cmp', 'vid-cv');
-  bindSlider('vol-v', 'vol-vv');
-  bindSlider('vol-a', 'vol-av');
+function fmtBytes(bytes) {
+  if (!bytes || bytes < 0) return '0 MB';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024 * 1024 * 1024) return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+  return (bytes / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+}
 
-  /* ---------------- Format option lists ---------------- */
-  const formats = {
-    img: ['JPG', 'PNG', 'WEBP', 'TIFF', 'GIF', 'BMP', 'HEIC', 'ICO', 'PDF'],
-    aud: ['MP3', 'WAV', 'FLAC', 'AAC', 'M4A', 'OGG', 'WMA'],
-    vid: ['MP4', 'MOV', 'AVI', 'MKV', 'WebM', 'GIF', 'TS'],
-    doc: ['PDF', 'DOCX', 'XLSX', 'PPTX', 'TXT', 'EPUB', 'HTML']
-  };
-  const fmtOpts = (type, def) => formats[type].map(f => `<option${f === def ? ' selected' : ''}>${f}</option>`).join('');
+/* ================================================================
+ * Tab switching (保持不变)
+ * ================================================================ */
+const tabs = document.querySelectorAll('.tab');
+const panels = document.querySelectorAll('.panel');
+const navItems = document.querySelectorAll('.nav-item[data-tab]');
 
-  /* ---------------- File row factory ---------------- */
-  let fileCounter = 0;
-  const sampleNames = {
-    img: ['sunset_beach.jpg', 'portrait_01.png', 'design_v3.tiff', 'logo.svg', 'screenshot.webp'],
-    aud: ['main_theme.mp3', 'interview_clip.wav', 'podcast_ep09.flac', 'ringtone.m4r'],
-    vid: ['product_demo.mp4', 'travel_clip.mov', 'recording_2025.avi', 'b站上传.mkv'],
-    doc: ['季度报告.pdf', '合同草稿.docx', '数据表格.xlsx', '演示文稿.pptx', 'readme.txt']
-  };
-  const sizes = { img: ['1.8 MB','3.2 MB','8.4 MB','24 KB','680 KB'], aud: ['4.1 MB','18.6 MB','22.3 MB','1.2 MB'], vid: ['284 MB','142 MB','1.2 GB','420 MB'], doc: ['480 KB','220 KB','1.8 MB','5.4 MB','4 KB'] };
-  const meta = { img: '2048×1365 · sRGB', aud: '44.1 kHz · 320 kbps', vid: '1920×1080 · 30 fps', doc: '12 页 · 2,486 字' };
-  const icoCls = { img: 'fi-img', aud: 'fi-aud', vid: 'fi-vid', doc: 'fi-doc' };
+function switchTab(target) {
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.panel === target));
+  panels.forEach(p => p.classList.toggle('active', p.id === 'panel-' + target));
+  navItems.forEach(n => n.classList.toggle('active', n.dataset.tab === target));
+}
+tabs.forEach(t => t.addEventListener('click', () => switchTab(t.dataset.panel)));
+navItems.forEach(n => n.addEventListener('click', () => switchTab(n.dataset.tab)));
 
-  function addFile(type, listId) {
-    const list = document.getElementById(listId);
-    const names = sampleNames[type], s = sizes[type];
-    const name = names[Math.floor(Math.random() * names.length)];
-    const size = s[Math.floor(Math.random() * s.length)];
-    const idx = ++fileCounter;
-    const row = document.createElement('div');
-    row.className = 'file-row';
-    row.innerHTML = `
-      <div class="file-icon ${icoCls[type]}">${type.toUpperCase().slice(0,3)}${idx}</div>
-      <div class="file-meta">
-        <div class="name">${name}</div>
-        <div class="info">${size} · ${meta[type]}</div>
-      </div>
-      <select class="format-select">${fmtOpts(type, formats[type][0])}</select>
-      <div class="file-actions">
-        <button class="icon-btn" title="预览"><svg class="icon icon-sm"><use href="#i-eye"/></svg></button>
-        <button class="icon-btn" title="删除" data-remove><svg class="icon icon-sm"><use href="#i-clear"/></svg></button>
-      </div>`;
-    row.querySelector('[data-remove]').addEventListener('click', () => row.remove());
-    list.appendChild(row);
-    showToast(`已添加 ${name}`);
-  }
-
-  /* Drop zone / add button click = add a file */
-  ['img','aud','vid','doc'].forEach(type => {
-    const drop = document.getElementById('drop-' + type);
-    if (!drop) return;
-    drop.addEventListener('click', () => {
-      const list = 'files-' + type;
-      // add 1-3 files randomly
-      const n = 1 + Math.floor(Math.random() * 2);
-      for (let i = 0; i < n; i++) addFile(type, list);
-    });
-    ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
-    ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
-    drop.addEventListener('drop', e => {
-      const list = 'files-' + type;
-      const n = 2 + Math.floor(Math.random() * 2);
-      for (let i = 0; i < n; i++) addFile(type, list);
-    });
-
-    const clr = document.getElementById('clear-' + type);
-    if (clr) clr.addEventListener('click', () => {
-      document.getElementById('files-' + type).innerHTML = '';
-      showToast('列表已清空');
-    });
-
-    const start = document.getElementById('start-' + type);
-    if (start) start.addEventListener('click', () => {
-      const list = document.getElementById('files-' + type);
-      const rows = list.querySelectorAll('.file-row');
-      if (!rows.length) { showToast('请先添加文件'); return; }
-      rows.forEach(r => {
-        const name = r.querySelector('.name').textContent;
-        const fmt = r.querySelector('.format-select').value;
-        pushTask(`转换 ${name} → ${fmt}`, Math.floor(4 + Math.random() * 18));
-      });
-      showToast(`已将 ${rows.length} 个任务加入队列`);
-    });
-  });
-
-  /* ---------------- Task queue (right bar) ---------------- */
-  const tasks = []; // {id, name, status, progress, speed, eta}
-  const taskList = document.getElementById('task-list');
-  let taskIdSeq = 100;
-
-  function pushTask(name, durationSec = 12) {
-    const t = { id: ++taskIdSeq, name, status: 'wait', progress: 0, speed: (200 + Math.random() * 800).toFixed(0), eta: durationSec, total: durationSec };
-    tasks.push(t);
-    renderTasks();
-    updateTopStat();
-  }
-
-  function renderTasks() {
-    taskList.innerHTML = tasks.map(t => {
-      const statusMap = {
-        wait: `<span class="status-pill s-wait">等待中</span>`,
-        run:  `<span class="status-pill s-run">处理中</span>`,
-        done: `<span class="status-pill s-done">完成</span>`,
-        err:  `<span class="status-pill s-err">失败</span>`,
-      };
-      const meta = t.status === 'done'
-        ? `<span>${(Math.random()*3+1).toFixed(1)} MB · 已节省 ${Math.floor(30 + Math.random()*50)}%</span>
-           <span><svg class="icon icon-sm"><use href="#i-download"/></svg> 打开</span>`
-        : t.status === 'run'
-        ? `<span>${t.speed} KB/s</span><span>ETA ${Math.max(0, Math.ceil(t.eta))}s</span>`
-        : t.status === 'err'
-        ? `<span>错误: 解码失败</span><span><svg class="icon icon-sm"><use href="#i-history"/></svg> 重试</span>`
-        : `<span>队列第 ${tasks.indexOf(t)+1} 位</span><span><svg class="icon icon-sm"><use href="#i-clear"/></svg> 取消</span>`;
-      return `<div class="task" data-id="${t.id}">
-        <div class="t-head"><div class="t-name">${t.name}</div>${statusMap[t.status]}</div>
-        <div class="bar"><span style="width:${t.progress}%"></span></div>
-        <div class="t-meta">${meta}</div>
-      </div>`;
-    }).join('');
-  }
-
-  /* Simulation loop: start pending tasks, advance running ones */
-  let maxRunning = 2;
-  setInterval(() => {
-    const running = tasks.filter(t => t.status === 'run');
-    const waiting = tasks.filter(t => t.status === 'wait');
-    while (running.length < maxRunning && waiting.length) {
-      const t = waiting.shift();
-      t.status = 'run';
-      running.push(t);
+/* ================================================================
+ * 自定义开关（支持 data-toggle 绑定到 prefs）
+ * ================================================================ */
+document.querySelectorAll('.switch').forEach(sw => {
+  sw.addEventListener('click', e => {
+    const t = e.currentTarget;
+    t.classList.toggle('on');
+    const key = t.dataset.toggle;
+    if (key && prefs.hasOwnProperty(key)) {
+      prefs[key] = t.classList.contains('on');
+      saveStore(STORE_KEYS.prefs, prefs);
     }
-    let changed = false;
-    tasks.forEach(t => {
-      if (t.status === 'run') {
-        const step = (100 / t.total) * 0.5 + Math.random() * 1.2;
-        t.progress = Math.min(100, t.progress + step);
-        t.eta = t.total - (t.progress / 100) * t.total;
-        if (t.progress >= 100) {
-          // 8% random failure
-          if (Math.random() < 0.06) { t.status = 'err'; t.progress = 28; }
-          else { t.status = 'done'; t.progress = 100; pushHistory(t.name); }
+  });
+});
+
+/* ================================================================
+ * Segment groups
+ * ================================================================ */
+document.querySelectorAll('.segment').forEach(seg => {
+  seg.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      seg.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+});
+
+/* ================================================================
+ * Sliders live label
+ * ================================================================ */
+const bindSlider = (id, valId, suffix = '') => {
+  const el = document.getElementById(id); if (!el) return;
+  const v1 = document.getElementById(valId);
+  const update = () => { if (v1) v1.textContent = el.value + suffix; };
+  el.addEventListener('input', update);
+};
+bindSlider('img-quality', 'img-qv');
+bindSlider('aud-bps', 'aud-bv');
+bindSlider('vid-cmp', 'vid-cv');
+bindSlider('vol-v', 'vol-vv');
+bindSlider('vol-a', 'vol-av');
+
+/* ================================================================
+ * 格式选项
+ * ================================================================ */
+const formats = {
+  img: ['JPG', 'PNG', 'WEBP', 'TIFF', 'GIF', 'BMP', 'HEIC', 'ICO', 'PDF'],
+  aud: ['MP3', 'WAV', 'FLAC', 'AAC', 'M4A', 'OGG', 'WMA'],
+  vid: ['MP4', 'MOV', 'AVI', 'MKV', 'WebM', 'GIF', 'TS'],
+  doc: ['PDF', 'DOCX', 'XLSX', 'PPTX', 'TXT', 'EPUB', 'HTML']
+};
+const fmtOpts = (type, def) => formats[type].map(f => `<option${f === def ? ' selected' : ''}>${f}</option>`).join('');
+const meta = { img: '2048×1365 · sRGB', aud: '44.1 kHz · 320 kbps', vid: '1920×1080 · 30 fps', doc: '12 页 · 2,486 字' };
+const icoCls = { img: 'fi-img', aud: 'fi-aud', vid: 'fi-vid', doc: 'fi-doc' };
+const sampleNames = {
+  img: ['sunset_beach.jpg', 'portrait_01.png', 'design_v3.tiff', 'logo.svg', 'screenshot.webp'],
+  aud: ['main_theme.mp3', 'interview_clip.wav', 'podcast_ep09.flac', 'ringtone.m4r'],
+  vid: ['product_demo.mp4', 'travel_clip.mov', 'recording_2025.avi', 'b站上传.mkv'],
+  doc: ['季度报告.pdf', '合同草稿.docx', '数据表格.xlsx', '演示文稿.pptx', 'readme.txt']
+};
+
+/* ================================================================
+ * File row factory + persistence
+ * ================================================================ */
+let fileCounter = 0;
+
+function addFile(type, listId, rowData) {
+  const list = document.getElementById(listId);
+  const names = sampleNames[type];
+  const name = rowData ? rowData.name : names[Math.floor(Math.random() * names.length)];
+  const size = rowData ? rowData.size : (Math.floor(Math.random() * 9000 + 200)); // KB
+  const fmt  = rowData ? rowData.fmt  : formats[type][0];
+  const idx  = ++fileCounter;
+
+  const row = document.createElement('div');
+  row.className = 'file-row';
+  row.dataset.type = type;
+  row.dataset.name = name;
+  row.innerHTML = `
+    <div class="file-icon ${icoCls[type]}">${type.toUpperCase().slice(0,3)}${idx}</div>
+    <div class="file-meta">
+      <div class="name">${name}</div>
+      <div class="info">${size} KB · ${meta[type]}</div>
+    </div>
+    <select class="format-select">${fmtOpts(type, fmt)}</select>
+    <div class="file-actions">
+      <button class="icon-btn" title="预览"><svg class="icon icon-sm"><use href="#i-eye"/></svg></button>
+      <button class="icon-btn" title="删除" data-remove><svg class="icon icon-sm"><use href="#i-clear"/></svg></button>
+    </div>`;
+  row.querySelector('[data-remove]').addEventListener('click', () => {
+    row.remove();
+    if (prefs.keepFiles) persistFiles();
+  });
+  row.querySelector('.format-select').addEventListener('change', () => {
+    if (prefs.keepFiles) persistFiles();
+  });
+  list.appendChild(row);
+  showToast(`已添加 ${name}`);
+}
+
+function persistFiles() {
+  const out = { img: [], aud: [], vid: [], doc: [] };
+  ['img', 'aud', 'vid', 'doc'].forEach(type => {
+    const list = document.getElementById('files-' + type);
+    if (!list) return;
+    list.querySelectorAll('.file-row').forEach(row => {
+      const sel = row.querySelector('.format-select');
+      out[type].push({
+        name: row.dataset.name,
+        size: Math.floor(Math.random() * 9000 + 200), // 简化：刷新时重新分配一个随机大小
+        fmt: sel ? sel.value : formats[type][0]
+      });
+    });
+  });
+  saveStore(STORE_KEYS.files, out);
+  files = out;
+}
+
+/* 从持久化数据恢复文件到 DOM */
+function restoreFiles() {
+  if (!prefs.keepFiles) return;
+  ['img', 'aud', 'vid', 'doc'].forEach(type => {
+    const arr = files[type] || [];
+    arr.forEach(f => addFile(type, 'files-' + type, f));
+  });
+}
+
+/* Drop zone / add button click = add a file */
+['img','aud','vid','doc'].forEach(type => {
+  const drop = document.getElementById('drop-' + type);
+  if (!drop) return;
+  drop.addEventListener('click', () => {
+    const n = 1 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < n; i++) {
+      addFile(type, 'files-' + type);
+      if (prefs.keepFiles) persistFiles();
+    }
+  });
+  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+  drop.addEventListener('drop', e => {
+    const n = 2 + Math.floor(Math.random() * 2);
+    for (let i = 0; i < n; i++) {
+      addFile(type, 'files-' + type);
+      if (prefs.keepFiles) persistFiles();
+    }
+  });
+
+  const clr = document.getElementById('clear-' + type);
+  if (clr) clr.addEventListener('click', () => {
+    const list = document.getElementById('files-' + type);
+    if (list) list.innerHTML = '';
+    if (prefs.keepFiles) persistFiles();
+    showToast('列表已清空');
+  });
+
+  const start = document.getElementById('start-' + type);
+  if (start) start.addEventListener('click', () => {
+    const list = document.getElementById('files-' + type);
+    const rows = list.querySelectorAll('.file-row');
+    if (!rows.length) { showToast('请先添加文件'); return; }
+    rows.forEach(r => {
+      const name = r.querySelector('.name').textContent;
+      const fmt = r.querySelector('.format-select').value;
+      pushTask(`转换 ${name} → ${fmt}`, Math.floor(4 + Math.random() * 18));
+    });
+    // 转换完后从文件列表移除（模拟已消耗）
+    Array.from(rows).forEach(r => r.remove());
+    if (prefs.keepFiles) persistFiles();
+  });
+});
+
+/* ================================================================
+ * 任务队列
+ * ================================================================ */
+let taskIdSeq = Math.max(100, ...tasks.map(t => t.id || 0));
+
+function pushTask(name, durationSec = 12) {
+  const t = {
+    id: ++taskIdSeq,
+    name,
+    status: 'wait',
+    progress: 0,
+    speed: (200 + Math.random() * 800).toFixed(0),
+    eta: durationSec,
+    total: durationSec,
+    startTs: Date.now(),
+    sizeKB: Math.floor(Math.random() * 8000 + 200),
+    savedRatio: Math.floor(30 + Math.random() * 55) // 压缩比
+  };
+  tasks.push(t);
+  renderTasks();
+  updateTopStat();
+  if (prefs.keepTasks) saveStore(STORE_KEYS.tasks, tasks);
+}
+
+function renderTasks() {
+  const taskList = document.getElementById('task-list');
+  if (!taskList) return;
+  if (!tasks.length) {
+    taskList.innerHTML = `<div class="empty-state" style="text-align:center; padding:24px 12px; color:var(--text-mute); font-size:13px;">
+      <svg class="icon" style="opacity:.5;"><use href="#i-bolt"/></svg>
+      <div style="margin-top:8px;">暂无任务</div>
+      <div style="font-size:12px; opacity:.7; margin-top:4px;">在下方卡片中添加文件并点击「开始转换」</div>
+    </div>`;
+    return;
+  }
+  taskList.innerHTML = tasks.map(t => {
+    const statusMap = {
+      wait: `<span class="status-pill s-wait">等待中</span>`,
+      run:  `<span class="status-pill s-run">处理中</span>`,
+      done: `<span class="status-pill s-done">完成</span>`,
+      err:  `<span class="status-pill s-err">失败</span>`,
+    };
+    const meta = t.status === 'done'
+      ? `<span>${(t.sizeKB/1024).toFixed(1)} MB · 已节省 ${t.savedRatio}%</span>
+         <span><svg class="icon icon-sm"><use href="#i-download"/></svg> 打开</span>`
+      : t.status === 'run'
+      ? `<span>${t.speed} KB/s</span><span>ETA ${Math.max(0, Math.ceil(t.eta))}s</span>`
+      : t.status === 'err'
+      ? `<span>错误: 解码失败</span><span><svg class="icon icon-sm"><use href="#i-history"/></svg> 重试</span>`
+      : `<span>队列第 ${tasks.indexOf(t)+1} 位</span><span><svg class="icon icon-sm"><use href="#i-clear"/></svg> 取消</span>`;
+    return `<div class="task" data-id="${t.id}">
+      <div class="t-head"><div class="t-name">${t.name}</div>${statusMap[t.status]}</div>
+      <div class="bar"><span style="width:${t.progress}%"></span></div>
+      <div class="t-meta">${meta}</div>
+    </div>`;
+  }).join('');
+}
+
+/* Simulation loop: start pending tasks, advance running ones */
+let maxRunning = 2;
+setInterval(() => {
+  const running = tasks.filter(t => t.status === 'run');
+  const waiting = tasks.filter(t => t.status === 'wait');
+  while (running.length < maxRunning && waiting.length) {
+    const t = waiting.shift();
+    t.status = 'run';
+    running.push(t);
+  }
+  let changed = false;
+  tasks.forEach(t => {
+    if (t.status === 'run') {
+      const step = (100 / t.total) * 0.5 + Math.random() * 1.2;
+      t.progress = Math.min(100, t.progress + step);
+      t.eta = t.total - (t.progress / 100) * t.total;
+      if (t.progress >= 100) {
+        if (Math.random() < 0.06) {
+          t.status = 'err';
+          t.progress = 28;
+          stats.fail += 1;
+        } else {
+          t.status = 'done';
+          t.progress = 100;
+          stats.ok += 1;
+          stats.total += 1;
+          stats.savedBytes += Math.floor(t.sizeKB * 1024 * t.savedRatio / 100);
+          pushHistory(t.name, t.sizeKB);
         }
         changed = true;
       }
-    });
-    if (changed) { renderTasks(); updateTopStat(); }
-  }, 600);
-
-  function updateTopStat() {
-    const live = document.getElementById('live-count');
-    const sub = document.getElementById('live-sub');
-    if (!live) return;
-    const n = tasks.filter(t => t.status === 'run' || t.status === 'wait').length;
-    live.textContent = n;
-    const w = tasks.filter(t => t.status === 'wait').length;
-    const r = tasks.filter(t => t.status === 'run').length;
-    sub.textContent = `${w} 排队 · ${r} 运行`;
-  }
-
-  document.getElementById('clear-tasks').addEventListener('click', () => {
-    tasks.length = 0;
-    renderTasks(); updateTopStat();
-    showToast('已清空任务队列');
+      changed = true;
+    }
   });
+  if (changed) {
+    renderTasks();
+    updateTopStat();
+    if (prefs.keepTasks) saveStore(STORE_KEYS.tasks, tasks);
+    saveStore(STORE_KEYS.stats, stats);
+  }
+}, 800);
 
-  /* ---------------- History ---------------- */
-  const hist = [
-    { name: 'product_demo.mp4 → GIF', time: '10 分钟前', size: '8.4 MB' },
-    { name: '季度报告.pdf → DOCX', time: '1 小时前', size: '512 KB' },
-    { name: 'sunset_beach.jpg → WEBP', time: '3 小时前', size: '320 KB' },
-    { name: 'main_theme.mp3 → WAV', time: '昨天', size: '22.1 MB' }
-  ];
-  function pushHistory(name) {
-    hist.unshift({ name, time: '刚刚', size: (Math.random() * 5 + 0.5).toFixed(1) + ' MB' });
-    if (hist.length > 6) hist.pop();
-    renderHistory();
+function updateTopStat() {
+  const live = document.getElementById('live-count');
+  const sub = document.getElementById('live-sub');
+  if (!live) return;
+  const n = tasks.filter(t => t.status === 'run' || t.status === 'wait').length;
+  live.textContent = n;
+  const w = tasks.filter(t => t.status === 'wait').length;
+  const r = tasks.filter(t => t.status === 'run').length;
+  sub.textContent = `${w} 排队 · ${r} 运行`;
+
+  // 其他统计卡
+  const elTotal = document.getElementById('stat-total');
+  if (elTotal) {
+    elTotal.textContent = stats.total.toLocaleString();
+    document.getElementById('stat-month').textContent = '本月 +' + (stats.total - (stats.totalLastMonth || 0));
+    document.getElementById('stat-space').textContent = fmtBytes(stats.savedBytes);
+    document.getElementById('stat-cmp').textContent = '平均压缩 ' + (stats.total ? Math.min(85, 30 + Math.floor((stats.savedBytes / stats.total) % 55)) : 0) + '%';
+    const finished = stats.ok + stats.fail;
+    document.getElementById('stat-rate').textContent = finished ? ((stats.ok / finished * 100).toFixed(1) + '%') : '—';
+    document.getElementById('stat-retry').textContent = stats.fail ? '失败任务 ' + stats.fail : '无失败任务';
   }
-  function renderHistory() {
-    document.getElementById('history').innerHTML = hist.map(h =>
-      `<div class="history-item"><div class="hi-ico"><svg class="icon icon-sm"><use href="#i-history"/></svg></div>
-       <div class="hi-meta"><div>${h.name}</div><div>${h.time} · ${h.size}</div></div></div>`
-    ).join('');
-  }
+}
+
+document.getElementById('clear-tasks').addEventListener('click', () => {
+  tasks.length = 0;
+  renderTasks(); updateTopStat();
+  if (prefs.keepTasks) saveStore(STORE_KEYS.tasks, tasks);
+  showToast('已清空任务队列');
+});
+
+/* ================================================================
+ * History
+ * ================================================================ */
+function pushHistory(name, sizeKB) {
+  if (!prefs.keepHistory) return;
+  history.unshift({ name, ts: Date.now(), sizeKB });
+  if (history.length > 20) history.length = 20;
   renderHistory();
-
-  /* ---------------- Toast ---------------- */
-  let toastTimer = null;
-  function showToast(text) {
-    const t = document.getElementById('toast');
-    document.getElementById('toast-text').textContent = text;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  saveStore(STORE_KEYS.history, history);
+}
+function renderHistory() {
+  const box = document.getElementById('history');
+  if (!box) return;
+  if (!history.length) {
+    box.innerHTML = `<div class="empty-state" style="text-align:center; padding:16px 8px; color:var(--text-mute); font-size:12px;">
+      <svg class="icon" style="opacity:.4;"><use href="#i-history"/></svg>
+      <div style="margin-top:6px;">尚无历史记录</div>
+    </div>`;
+    return;
   }
+  box.innerHTML = history.map(h =>
+    `<div class="history-item">
+      <div class="hi-ico"><svg class="icon icon-sm"><use href="#i-history"/></svg></div>
+      <div class="hi-meta"><div>${h.name}</div><div>${relTime(h.ts)} · ${(h.sizeKB/1024).toFixed(1)} MB</div></div>
+    </div>`
+  ).join('');
+}
 
-  /* ---------------- Fake waveform bars ---------------- */
-  (function buildWave() {
-    const w = document.getElementById('wave-a');
-    if (!w) return;
-    for (let i = 0; i < 96; i++) {
-      const b = document.createElement('div');
-      b.className = 'bar';
-      const h = 15 + Math.abs(Math.sin(i * 0.35) * 45) + Math.random() * 18;
-      b.style.height = Math.min(100, h) + '%';
-      b.style.flex = '1';
-      b.style.margin = '0 1px';
-      w.appendChild(b);
+/* ================================================================
+ * Toast
+ * ================================================================ */
+let toastTimer = null;
+function showToast(text) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = text;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+/* ================================================================
+ * Fake waveform bars
+ * ================================================================ */
+(function buildWave() {
+  const w = document.getElementById('wave-a');
+  if (!w) return;
+  for (let i = 0; i < 96; i++) {
+    const b = document.createElement('div');
+    b.className = 'bar';
+    const h = 15 + Math.abs(Math.sin(i * 0.35) * 45) + Math.random() * 18;
+    b.style.height = Math.min(100, h) + '%';
+    b.style.flex = '1';
+    b.style.margin = '0 1px';
+    w.appendChild(b);
+  }
+})();
+
+/* ================================================================
+ * 播放/导出按钮（音视频剪辑区）
+ * ================================================================ */
+let playingV = false, playingA = false;
+let pheadV = 35, pheadA = 8;
+document.getElementById('btn-play-v').addEventListener('click', e => {
+  playingV = !playingV;
+  e.currentTarget.innerHTML = playingV
+    ? '<svg class="icon icon-sm"><use href="#i-pause"/></svg>'
+    : '<svg class="icon icon-sm"><use href="#i-play"/></svg>';
+});
+document.getElementById('btn-play-a').addEventListener('click', e => {
+  playingA = !playingA;
+  e.currentTarget.innerHTML = playingA
+    ? '<svg class="icon icon-sm"><use href="#i-pause"/></svg>'
+    : '<svg class="icon icon-sm"><use href="#i-play"/></svg>';
+});
+document.getElementById('btn-export-v').addEventListener('click', () => {
+  pushTask('导出视频 · product_final.mp4', 14);
+});
+document.getElementById('btn-export-a').addEventListener('click', () => {
+  pushTask('导出音频 · final_mix.mp3', 6);
+});
+
+setInterval(() => {
+  if (playingV) {
+    pheadV = (pheadV + 0.4) % 100;
+    const ph = document.getElementById('playhead-v');
+    if (ph) ph.style.left = pheadV + '%';
+  }
+  if (playingA) {
+    pheadA = (pheadA + 0.3) % 100;
+  }
+}, 120);
+
+/* ================================================================
+ * 设置面板 & 确认对话框
+ * ================================================================ */
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.add('show');
+}
+function closeModal(el) {
+  // 找到父级 .modal
+  while (el && !el.classList.contains('modal')) el = el.parentElement;
+  if (el) el.classList.remove('show');
+}
+
+/* 打开设置 */
+const settingsBtn = document.getElementById('btn-settings-dlg');
+if (settingsBtn) settingsBtn.addEventListener('click', () => {
+  // 刷新开关状态
+  document.querySelectorAll('[data-toggle]').forEach(sw => {
+    const k = sw.dataset.toggle;
+    if (prefs[k]) sw.classList.add('on');
+    else sw.classList.remove('on');
+  });
+  openModal('modal-settings');
+});
+
+/* 关闭按钮：任何带 data-close-dlg 的元素 */
+document.querySelectorAll('[data-close-dlg]').forEach(b => {
+  b.addEventListener('click', e => closeModal(e.currentTarget));
+});
+/* 点击遮罩关闭 */
+document.querySelectorAll('.modal-mask').forEach(m => {
+  m.addEventListener('click', e => closeModal(e.currentTarget));
+});
+
+/* 主题选择 */
+document.querySelectorAll('#theme-picker .theme-card').forEach(c => {
+  c.addEventListener('click', () => applyTheme(c.dataset.theme));
+});
+
+/* 确认对话框：用 showConfirm(title, msg, onOk) 触发 */
+let pendingOk = null;
+function showConfirm(title, msg, onOk) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-message').innerHTML = msg;
+  pendingOk = onOk;
+  openModal('modal-confirm');
+}
+document.getElementById('confirm-ok').addEventListener('click', () => {
+  if (pendingOk) { try { pendingOk(); } catch (e) {} pendingOk = null; }
+  closeModal(document.getElementById('confirm-ok'));
+});
+
+/* 设置面板：清除按钮 */
+document.querySelectorAll('[data-action]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const act = btn.dataset.action;
+    if (act === 'clearHistory') {
+      showConfirm('清除历史记录', '所有历史记录将被永久删除，无法恢复。', () => {
+        history.length = 0;
+        saveStore(STORE_KEYS.history, history);
+        renderHistory();
+        showToast('历史记录已清除');
+      });
+    } else if (act === 'clearTasks') {
+      showConfirm('清除任务队列', '等待中 / 处理中 / 完成的任务都将被删除，统计数据保留。', () => {
+        tasks.length = 0;
+        saveStore(STORE_KEYS.tasks, tasks);
+        renderTasks();
+        updateTopStat();
+        showToast('任务队列已清除');
+      });
+    } else if (act === 'clearFiles') {
+      showConfirm('清除上传文件', '各转换标签下所有已添加但未开始转换的文件将被移除。', () => {
+        ['img', 'aud', 'vid', 'doc'].forEach(type => {
+          const list = document.getElementById('files-' + type);
+          if (list) list.innerHTML = '';
+        });
+        files = { img: [], aud: [], vid: [], doc: [] };
+        saveStore(STORE_KEYS.files, files);
+        showToast('上传文件已清除');
+      });
+    } else if (act === 'clearAll') {
+      showConfirm('重置全部数据', '将清除所有历史记录、任务队列、上传文件与统计数据，并重置偏好。<b>此操作不可撤销。</b>', () => {
+        history.length = 0;
+        tasks.length = 0;
+        files = { img: [], aud: [], vid: [], doc: [] };
+        stats = { total: 0, ok: 0, fail: 0, savedBytes: 0, firstTs: 0, monthTotal: 0, totalLastMonth: 0 };
+        Object.keys(STORE_KEYS).forEach(k => localStorage.removeItem(STORE_KEYS[k]));
+        // 重置 prefs 到默认值
+        prefs = Object.assign({}, DEFAULT_PREFS);
+        saveStore(STORE_KEYS.prefs, prefs);
+        // 移除 DOM 中文件行
+        ['img', 'aud', 'vid', 'doc'].forEach(type => {
+          const list = document.getElementById('files-' + type);
+          if (list) list.innerHTML = '';
+        });
+        renderTasks(); renderHistory(); updateTopStat(); applyTheme(prefs.theme);
+        showToast('已重置为全新状态');
+        closeModal(document.querySelector('#modal-settings'));
+      });
     }
-  })();
+  });
+});
 
-  /* ---------------- Playhead animation (fake) ---------------- */
-  let playingV = false, playingA = false;
-  let pheadV = 35, pheadA = 8;
-  document.getElementById('btn-play-v').addEventListener('click', e => {
-    playingV = !playingV;
-    e.currentTarget.innerHTML = playingV
-      ? '<svg class="icon icon-sm"><use href="#i-pause"/></svg>'
-      : '<svg class="icon icon-sm"><use href="#i-play"/></svg>';
-  });
-  document.getElementById('btn-play-a').addEventListener('click', e => {
-    playingA = !playingA;
-    e.currentTarget.innerHTML = playingA
-      ? '<svg class="icon icon-sm"><use href="#i-pause"/></svg>'
-      : '<svg class="icon icon-sm"><use href="#i-play"/></svg>';
-  });
-  document.getElementById('btn-export-v').addEventListener('click', () => {
-    pushTask('导出视频 · product_final.mp4', 14);
-  });
-  document.getElementById('btn-export-a').addEventListener('click', () => {
-    pushTask('导出音频 · final_mix.mp3', 6);
-  });
+/* ================================================================
+ * 启动：恢复状态 + 应用主题 + 初始渲染
+ * ================================================================ */
+applyTheme(prefs.theme);
+restoreFiles();
+renderTasks();
+renderHistory();
+updateTopStat();
 
-  setInterval(() => {
-    if (playingV) {
-      pheadV = (pheadV + 0.4) % 100;
-      const ph = document.getElementById('playhead-v');
-      if (ph) ph.style.left = pheadV + '%';
-    }
-    if (playingA) {
-      pheadA = (pheadA + 0.3) % 100;
-    }
-  }, 120);
-
-  /* ---------------- Seed initial demo tasks & files ---------------- */
-  ['img','aud'].forEach((type, i) => {
-    for (let j = 0; j < 2; j++) addFile(type, 'files-' + type);
-  });
-  addFile('vid', 'files-vid');
-  addFile('doc', 'files-doc');
-
-  pushTask('转换 product_demo.mp4 → GIF', 12);
-  pushTask('转换 sunset_beach.jpg → WEBP', 4);
-  pushTask('合并 3 段音频 · final_mix.mp3', 8);
-  pushTask('季度报告.pdf → DOCX (OCR)', 10);
+/* 首次进入（完全空白）的提示 */
+if (!history.length && !tasks.length && !stats.total) {
+  // 初始空白状态：不做任何种入操作，保持纯净
+}
 </script>
 </body>
 </html>
