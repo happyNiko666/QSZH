@@ -88,6 +88,21 @@ input, select, textarea { font-family: inherit; color: inherit; }
 .brand-text h1 { font-size: 16px; font-weight: 700; letter-spacing: .3px; }
 .brand-text p { font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
 
+.icon {
+  width: 18px; height: 18px; flex-shrink: 0;
+  display: inline-block; vertical-align: -3px;
+  color: currentColor;
+}
+.icon-sm { width: 14px; height: 14px; }
+.icon-md { width: 20px; height: 20px; }
+.icon-lg { width: 28px; height: 28px; }
+.icon-amber { color: var(--amber-2); }
+.icon-cyan  { color: var(--cyan); }
+.icon-green { color: var(--green); }
+.icon-violet{ color: var(--violet); }
+.icon-pink  { color: var(--pink); }
+.icon-dim   { color: var(--text-dim); }
+
 .top-actions { display: flex; align-items: center; gap: 10px; }
 .badge {
   display: inline-flex; align-items: center; gap: 6px;
@@ -571,11 +586,67 @@ input, select, textarea { font-family: inherit; color: inherit; }
 .brand-mark { animation: float 6s ease-in-out infinite; }
 
 /* Help hint */
-.hint { font-size: 11.5px; color: var(--text-mute); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
-.hint::before { content: "ℹ"; color: var(--amber); }
+.hint { font-size: 11.5px; color: var(--text-mute); margin-top: 6px; display: flex; align-items: center; gap: 8px; padding-left: 22px; position: relative; }
+.hint::before {
+  content: "";
+  position: absolute; left: 0; top: 50%; margin-top: -7px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 0 3px rgba(245,158,11,.18), inset 0 -2px 0 rgba(0,0,0,.15);
+}
+.hint::after {
+  content: "i";
+  position: absolute; left: 0; top: 50%; margin-top: -7px;
+  width: 14px; line-height: 14px; text-align: center;
+  font-size: 10px; font-weight: 800; color: #1a1203;
+  pointer-events: none;
+}
+
 </style>
 </head>
 <body>
+
+<!-- SVG 图标库（内联 sprite，无外部依赖） -->
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute;visibility:hidden" aria-hidden="true">
+  <defs>
+    <symbol id="i-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.8"/><path d="m21 15-4.5-4.5L7 20"/></symbol>
+    <symbol id="i-audio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="16" r="2.2"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="m22 7-5 4 5 4V7Z"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8M8 9h2"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2.5 21.5 9.5l-10 10H4.5v-7l10-10z"/><path d="m13 6 5 5"/></symbol>
+    <symbol id="i-mix" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="12" r="2.2"/><path d="M7.8 16.3 16 13.7M7.8 7.7 16 10.3"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+    <symbol id="i-brief" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M2 13h20"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13,2 4,14 11,14 10,22 20,10 13,10"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></symbol>
+    <symbol id="i-playo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="10,8 19,12 10,16"/><circle cx="12" cy="12" r="10"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19 4 12l7-7"/><path d="M20 19V5"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m13 5 7 7-7 7"/><path d="M4 19V5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v14m0 0 5-5m-5 5-5-5"/><path d="M4 21h16"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V7m0 0 5 5m-5-5-5 5"/><path d="M4 3h16"/></symbol>
+    <symbol id="i-clear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-cog" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></symbol>
+    <symbol id="i-rot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-flip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 8l5-5 5 5M8 16l5 5 5-5"/></symbol>
+    <symbol id="i-crop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2v16h16M2 6h16v16"/></symbol>
+    <symbol id="i-speed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10l6 4"/><circle cx="12" cy="12" r="10"/></symbol>
+    <symbol id="i-vol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14"/></symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="m23 9-12 12M11 21l12-12"/></symbol>
+    <symbol id="i-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></symbol>
+    <symbol id="i-dot" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-doc-b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></symbol>
+  </defs>
+</svg>
 
 <div class="app">
 
@@ -590,8 +661,8 @@ input, select, textarea { font-family: inherit; color: inherit; }
     </div>
     <div class="top-actions">
       <span class="badge"><span class="dot"></span>引擎运行中 · ffmpeg + libpng</span>
-      <button class="btn btn-sm">文档 <span>↗</span></button>
-      <button class="btn btn-primary btn-sm">开始转换</button>
+      <button class="btn btn-sm"><svg class="icon icon-sm"><use href="#i-doc-b"/></svg> 文档</button>
+      <button class="btn btn-primary btn-sm"><svg class="icon icon-sm"><use href="#i-play"/></svg> 开始转换</button>
     </div>
   </header>
 
@@ -599,26 +670,26 @@ input, select, textarea { font-family: inherit; color: inherit; }
   <aside class="sidebar">
     <div class="nav-group-title">格式转换</div>
     <nav class="nav">
-      <button class="nav-item active" data-tab="image"><span class="ico">🖼</span>图片转换<span class="count">11</span></button>
-      <button class="nav-item" data-tab="audio"><span class="ico">🎵</span>音频转换<span class="count">9</span></button>
-      <button class="nav-item" data-tab="video"><span class="ico">🎬</span>视频转换<span class="count">10</span></button>
-      <button class="nav-item" data-tab="document"><span class="ico">📄</span>文档转换<span class="count">8</span></button>
+      <button class="nav-item active" data-tab="image"><svg class="icon icon-amber"><use href="#i-img"/></svg>图片转换<span class="count">11</span></button>
+      <button class="nav-item" data-tab="audio"><svg class="icon icon-cyan"><use href="#i-audio"/></svg>音频转换<span class="count">9</span></button>
+      <button class="nav-item" data-tab="video"><svg class="icon icon-violet"><use href="#i-video"/></svg>视频转换<span class="count">10</span></button>
+      <button class="nav-item" data-tab="document"><svg class="icon icon-green"><use href="#i-doc"/></svg>文档转换<span class="count">8</span></button>
     </nav>
 
     <div class="nav-group-title">剪辑编辑</div>
     <nav class="nav">
-      <button class="nav-item" data-tab="edit-video"><span class="ico">✂</span>视频剪辑</button>
-      <button class="nav-item" data-tab="edit-audio"><span class="ico">🎚</span>音频剪辑</button>
-      <button class="nav-item" data-tab="mix"><span class="ico">🔀</span>音视频混合</button>
+      <button class="nav-item" data-tab="edit-video"><svg class="icon icon-amber"><use href="#i-edit"/></svg>视频剪辑</button>
+      <button class="nav-item" data-tab="edit-audio"><svg class="icon icon-cyan"><use href="#i-pulse"/></svg>音频剪辑</button>
+      <button class="nav-item" data-tab="mix"><svg class="icon icon-violet"><use href="#i-mix"/></svg>音视频混合</button>
     </nav>
 
     <div class="preset-card">
       <h4>快速预设</h4>
       <div class="preset-list">
-        <button class="preset"><span>📱 短视频平台</span><span class="tag">1080p</span></button>
-        <button class="preset"><span>💼 办公标准</span><span class="tag">PDF</span></button>
-        <button class="preset"><span>✨ 高清无损</span><span class="tag">H.265</span></button>
-        <button class="preset"><span>⚡ 极速压缩</span><span class="tag">75%</span></button>
+        <button class="preset"><svg class="icon icon-sm icon-amber"><use href="#i-phone"/></svg> 短视频平台<span class="tag">1080p</span></button>
+        <button class="preset"><svg class="icon icon-sm icon-amber"><use href="#i-brief"/></svg> 办公标准<span class="tag">PDF</span></button>
+        <button class="preset"><svg class="icon icon-sm icon-amber"><use href="#i-spark"/></svg> 高清无损<span class="tag">H.265</span></button>
+        <button class="preset"><svg class="icon icon-sm icon-amber"><use href="#i-bolt"/></svg> 极速压缩<span class="tag">75%</span></button>
       </div>
     </div>
   </aside>
@@ -631,8 +702,8 @@ input, select, textarea { font-family: inherit; color: inherit; }
         <p>拖拽文件到下方区域，或选择预设参数一键转换 / 剪辑</p>
       </div>
       <div class="quick">
-        <button class="btn btn-sm">📥 批量导入</button>
-        <button class="btn btn-sm">⚙ 设置</button>
+        <button class="btn btn-sm"><svg class="icon icon-sm"><use href="#i-upload"/></svg> 批量导入</button>
+        <button class="btn btn-sm"><svg class="icon icon-sm"><use href="#i-cog"/></svg> 设置</button>
       </div>
     </div>
 
@@ -646,22 +717,22 @@ input, select, textarea { font-family: inherit; color: inherit; }
 
     <!-- Category Tabs -->
     <nav class="tabs" role="tablist">
-      <button class="tab cat-img active" data-panel="image"><span class="tag-cat">IMG</span>图片格式转换</button>
-      <button class="tab cat-aud" data-panel="audio"><span class="tag-cat">AUD</span>音频格式转换</button>
-      <button class="tab cat-vid" data-panel="video"><span class="tag-cat">VID</span>视频格式转换</button>
-      <button class="tab cat-doc" data-panel="document"><span class="tag-cat">DOC</span>文档格式转换</button>
-      <button class="tab cat-edv" data-panel="edit-video"><span class="tag-cat">EDT</span>视频剪辑</button>
-      <button class="tab cat-eda" data-panel="edit-audio"><span class="tag-cat">EDT</span>音频剪辑</button>
+      <button class="tab active" data-panel="image"><svg class="icon icon-sm icon-amber"><use href="#i-img"/></svg> 图片格式转换</button>
+      <button class="tab" data-panel="audio"><svg class="icon icon-sm icon-cyan"><use href="#i-audio"/></svg> 音频格式转换</button>
+      <button class="tab" data-panel="video"><svg class="icon icon-sm icon-violet"><use href="#i-video"/></svg> 视频格式转换</button>
+      <button class="tab" data-panel="document"><svg class="icon icon-sm icon-green"><use href="#i-doc"/></svg> 文档格式转换</button>
+      <button class="tab" data-panel="edit-video"><svg class="icon icon-sm icon-amber"><use href="#i-edit"/></svg> 视频剪辑</button>
+      <button class="tab" data-panel="edit-audio"><svg class="icon icon-sm icon-cyan"><use href="#i-pulse"/></svg> 音频剪辑</button>
     </nav>
 
     <!-- ========== IMAGE PANEL ========== -->
     <section class="panel active" id="panel-image">
       <div class="grid-2">
         <div class="card">
-          <h3><span class="ico-sm">🖼</span>图片文件队列</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-img"/></svg> 图片文件队列</h3>
           <div class="drop" id="drop-img">
-            <div class="icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v14m0 0 5-5m-5 5-5-5"/><path d="M4 21h16"/></svg>
+            <div class="icon-lg" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(180deg,rgba(245,158,11,.2),rgba(245,158,11,.05));color:var(--amber-2);border:1px solid rgba(245,158,11,.3);display:grid;place-items:center;">
+              <svg class="icon icon-md"><use href="#i-upload"/></svg>
             </div>
             <h4>拖拽图片文件到此处 · 或点击选择</h4>
             <p>支持多文件批量导入 · 单次最多 500 个</p>
@@ -673,12 +744,12 @@ input, select, textarea { font-family: inherit; color: inherit; }
           </div>
           <div class="file-list" id="files-img"></div>
           <div style="display:flex; justify-content: space-between; margin-top: 14px;">
-            <button class="btn btn-sm btn-danger" id="clear-img">🗑 清空列表</button>
-            <button class="btn btn-primary btn-sm" id="start-img">▶ 开始批量转换</button>
+            <button class="btn btn-sm btn-danger" id="clear-img"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 清空列表</button>
+            <button class="btn btn-primary btn-sm" id="start-img"><svg class="icon icon-sm"><use href="#i-play"/></svg> 开始批量转换</button>
           </div>
         </div>
         <div class="card">
-          <h3><span class="ico-sm">⚙</span>图片转换参数</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 图片转换参数</h3>
 
           <div class="param-group">
             <label>输出格式</label>
@@ -732,22 +803,22 @@ input, select, textarea { font-family: inherit; color: inherit; }
     <section class="panel" id="panel-audio">
       <div class="grid-2">
         <div class="card">
-          <h3><span class="ico-sm">🎵</span>音频文件队列</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-audio"/></svg> 音频文件队列</h3>
           <div class="drop" id="drop-aud">
-            <div class="icon" style="background: linear-gradient(180deg, rgba(34,211,238,.22), rgba(34,211,238,.05)); color: var(--cyan); border-color: rgba(34,211,238,.3);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <div class="icon-lg" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(180deg,rgba(34,211,238,.22),rgba(34,211,238,.05));color:var(--cyan);border:1px solid rgba(34,211,238,.3);display:grid;place-items:center;">
+              <svg class="icon icon-md"><use href="#i-audio"/></svg>
             </div>
             <h4>拖拽音频文件到此处</h4>
             <p>支持 MP3 / WAV / FLAC / AAC / M4A / OGG / WMA / AMR / APE</p>
           </div>
           <div class="file-list" id="files-aud"></div>
           <div style="display:flex; justify-content: space-between; margin-top: 14px;">
-            <button class="btn btn-sm btn-danger" id="clear-aud">🗑 清空列表</button>
-            <button class="btn btn-primary btn-sm" id="start-aud">▶ 开始转换</button>
+            <button class="btn btn-sm btn-danger" id="clear-aud"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 清空列表</button>
+            <button class="btn btn-primary btn-sm" id="start-aud"><svg class="icon icon-sm"><use href="#i-play"/></svg> 开始转换</button>
           </div>
         </div>
         <div class="card">
-          <h3><span class="ico-sm">⚙</span>音频参数</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 音频参数</h3>
           <div class="param-group">
             <label>输出格式</label>
             <select class="param-input"><option>MP3 · 通用</option><option>WAV · 无损</option><option>FLAC · 无损压缩</option><option>AAC · 高效</option><option>M4A · Apple</option><option>OGG · 开源</option><option>WMA</option></select>
@@ -782,22 +853,22 @@ input, select, textarea { font-family: inherit; color: inherit; }
     <section class="panel" id="panel-video">
       <div class="grid-2">
         <div class="card">
-          <h3><span class="ico-sm">🎬</span>视频文件队列</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-video"/></svg> 视频文件队列</h3>
           <div class="drop" id="drop-vid">
-            <div class="icon" style="background: linear-gradient(180deg, rgba(167,139,250,.22), rgba(167,139,250,.05)); color: var(--violet); border-color: rgba(167,139,250,.3);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            <div class="icon-lg" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(180deg,rgba(167,139,250,.22),rgba(167,139,250,.05));color:var(--violet);border:1px solid rgba(167,139,250,.3);display:grid;place-items:center;">
+              <svg class="icon icon-md"><use href="#i-video"/></svg>
             </div>
             <h4>拖拽视频文件到此处</h4>
             <p>MP4 / MOV / AVI / FLV / MKV / WMV / TS / M4V / WebM / GIF</p>
           </div>
           <div class="file-list" id="files-vid"></div>
           <div style="display:flex; justify-content: space-between; margin-top: 14px;">
-            <button class="btn btn-sm btn-danger" id="clear-vid">🗑 清空列表</button>
-            <button class="btn btn-primary btn-sm" id="start-vid">▶ 开始转换</button>
+            <button class="btn btn-sm btn-danger" id="clear-vid"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 清空列表</button>
+            <button class="btn btn-primary btn-sm" id="start-vid"><svg class="icon icon-sm"><use href="#i-play"/></svg> 开始转换</button>
           </div>
         </div>
         <div class="card">
-          <h3><span class="ico-sm">⚙</span>视频参数</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 视频参数</h3>
           <div class="param-group">
             <label>输出格式</label>
             <select class="param-input"><option>MP4 · H.264 通用</option><option>MP4 · H.265 高效</option><option>MOV · Apple ProRes</option><option>MKV · 开源容器</option><option>AVI</option><option>WebM · VP9</option><option>GIF · 动图</option><option>TS · 流媒体</option></select>
@@ -839,22 +910,22 @@ input, select, textarea { font-family: inherit; color: inherit; }
     <section class="panel" id="panel-document">
       <div class="grid-2">
         <div class="card">
-          <h3><span class="ico-sm">📄</span>文档文件队列</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-doc"/></svg> 文档文件队列</h3>
           <div class="drop" id="drop-doc">
-            <div class="icon" style="background: linear-gradient(180deg, rgba(34,197,94,.22), rgba(34,197,94,.05)); color: var(--green); border-color: rgba(34,197,94,.3);">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div class="icon-lg" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(180deg,rgba(34,197,94,.22),rgba(34,197,94,.05));color:var(--green);border:1px solid rgba(34,197,94,.3);display:grid;place-items:center;">
+              <svg class="icon icon-md"><use href="#i-doc"/></svg>
             </div>
             <h4>拖拽文档到此处</h4>
             <p>PDF / Word / Excel / PPT / TXT / HTML / EPUB 互通</p>
           </div>
           <div class="file-list" id="files-doc"></div>
           <div style="display:flex; justify-content: space-between; margin-top: 14px;">
-            <button class="btn btn-sm btn-danger" id="clear-doc">🗑 清空列表</button>
-            <button class="btn btn-primary btn-sm" id="start-doc">▶ 开始转换</button>
+            <button class="btn btn-sm btn-danger" id="clear-doc"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 清空列表</button>
+            <button class="btn btn-primary btn-sm" id="start-doc"><svg class="icon icon-sm"><use href="#i-play"/></svg> 开始转换</button>
           </div>
         </div>
         <div class="card">
-          <h3><span class="ico-sm">⚙</span>文档参数</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 文档参数</h3>
           <div class="param-group">
             <label>转换方向</label>
             <select class="param-input"><option>PDF → Word (可编辑)</option><option>Word → PDF</option><option>Excel → PDF</option><option>PPT → PDF</option><option>PDF → 图片 (每页)</option><option>TXT → PDF</option><option>EPUB → PDF / MOBI</option></select>
@@ -878,24 +949,24 @@ input, select, textarea { font-family: inherit; color: inherit; }
     <section class="panel" id="panel-edit-video">
       <div class="card" style="margin-bottom: 16px;">
         <div class="editor-toolbar">
-          <button class="tb-btn on">✂ 切片</button>
-          <button class="tb-btn">🗑 删除</button>
-          <button class="tb-btn">🔗 合并</button>
-          <button class="tb-btn">↻ 旋转 90°</button>
-          <button class="tb-btn">⇅ 翻转</button>
-          <button class="tb-btn">⊟ 裁剪</button>
-          <button class="tb-btn">⏱ 调速 (1.0x)</button>
-          <button class="tb-btn">⏮ 倒放</button>
-          <button class="tb-btn">🎵 配音频</button>
-          <button class="tb-btn">🔇 静音</button>
+          <button class="tb-btn on"><svg class="icon icon-sm"><use href="#i-edit"/></svg> 切片</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 删除</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-pulse"/></svg> 合并</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-rot"/></svg> 旋转 90°</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-flip"/></svg> 翻转</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-crop"/></svg> 裁剪</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-speed"/></svg> 调速 (1.0x)</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-back"/></svg> 倒放</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-audio"/></svg> 配音频</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-mute"/></svg> 静音</button>
         </div>
         <div class="preview-stage" id="preview-vid">
           <span class="stamp">PREVIEW · 1920×1080 · 30fps</span>
           <div class="big-ico">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="icon" style="width:36px;height:36px"><use href="#i-play"/></svg>
           </div>
           <span class="time-label">00:00:42 / 00:02:15</span>
-          <div class="play-overlay"><button class="play-btn-big"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button></div>
+          <div class="play-overlay"><button class="play-btn-big"><svg class="icon" style="width:36px;height:36px"><use href="#i-play"/></svg></button></div>
         </div>
         <div class="timeline" style="margin-top: 14px;">
           <div class="ruler">
@@ -912,20 +983,20 @@ input, select, textarea { font-family: inherit; color: inherit; }
             <div class="playhead" id="playhead-v" style="left: 35%;"></div>
           </div>
           <div class="timeline-controls">
-            <button class="tbtn">⏮</button>
-            <button class="tbtn">◀</button>
-            <button class="tbtn primary" id="btn-play-v">▶</button>
-            <button class="tbtn">▶▶</button>
-            <button class="tbtn">⏭</button>
+            <button class="tbtn"><svg class="icon icon-sm"><use href="#i-back"/></svg></button>
+            <button class="tbtn"><svg class="icon icon-sm"><use href="#i-pause"/></svg></button>
+            <button class="tbtn primary" id="btn-play-v"><svg class="icon icon-sm"><use href="#i-play"/></svg></button>
+            <button class="tbtn"><svg class="icon icon-sm" style="transform:scaleX(-1)"><use href="#i-pause"/></svg></button>
+            <button class="tbtn"><svg class="icon icon-sm"><use href="#i-next"/></svg></button>
             <input class="time-input" value="00:00:42.100" />
-            <button class="btn btn-primary btn-sm" id="btn-export-v">导出视频</button>
+            <button class="btn btn-primary btn-sm" id="btn-export-v"><svg class="icon icon-sm"><use href="#i-download"/></svg> 导出视频</button>
           </div>
         </div>
       </div>
 
       <div class="grid-2">
         <div class="card">
-          <h3><span class="ico-sm">✂</span>精确切片</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-edit"/></svg> 精确切片</h3>
           <div class="param-row">
             <div class="param-group"><label>起始时间</label><input class="param-input" value="00:00:10.000" /></div>
             <div class="param-group"><label>结束时间</label><input class="param-input" value="00:00:45.500" /></div>
@@ -941,7 +1012,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
           <div class="hint">点击时间轴上的片段可拖拽调整长度 / 顺序。</div>
         </div>
         <div class="card">
-          <h3><span class="ico-sm">🎨</span>输出设置</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 输出设置</h3>
           <div class="param-group">
             <label>封装格式</label>
             <select class="param-input"><option>MP4 · H.264 + AAC</option><option>MOV · ProRes</option><option>MKV</option><option>WebM · VP9</option></select>
@@ -965,22 +1036,22 @@ input, select, textarea { font-family: inherit; color: inherit; }
     <section class="panel" id="panel-edit-audio">
       <div class="card" style="margin-bottom: 16px;">
         <div class="editor-toolbar">
-          <button class="tb-btn on">✂ 切片</button>
-          <button class="tb-btn">🗑 删除</button>
-          <button class="tb-btn">🔗 合并</button>
-          <button class="tb-btn">🔊 音量</button>
-          <button class="tb-btn">⚪ 淡入淡出</button>
-          <button class="tb-btn">🛡 降噪</button>
-          <button class="tb-btn">⏱ 语速</button>
-          <button class="tb-btn">🎙 铃声制作</button>
+          <button class="tb-btn on"><svg class="icon icon-sm"><use href="#i-edit"/></svg> 切片</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 删除</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-pulse"/></svg> 合并</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-vol"/></svg> 音量</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-info"/></svg> 淡入淡出</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-mute"/></svg> 降噪</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-speed"/></svg> 语速</button>
+          <button class="tb-btn"><svg class="icon icon-sm"><use href="#i-audio"/></svg> 铃声制作</button>
         </div>
         <div class="preview-stage" id="preview-aud">
           <span class="stamp">AUDIO · 44.1 kHz · 320 kbps</span>
           <div class="big-ico" style="background: linear-gradient(135deg, rgba(34,211,238,.3), rgba(167,139,250,.25)); color: var(--cyan);">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <svg class="icon" style="width:36px;height:36px"><use href="#i-audio"/></svg>
           </div>
           <span class="time-label">00:00:18 / 00:03:42</span>
-          <div class="play-overlay"><button class="play-btn-big" style="color: var(--cyan);"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button></div>
+          <div class="play-overlay"><button class="play-btn-big" style="color:var(--cyan)"><svg class="icon" style="width:36px;height:36px"><use href="#i-play"/></svg></button></div>
         </div>
         <div class="timeline" style="margin-top: 14px;">
           <div class="ruler">
@@ -989,20 +1060,20 @@ input, select, textarea { font-family: inherit; color: inherit; }
           </div>
           <div class="waveform" id="wave-a"></div>
           <div class="timeline-controls">
-            <button class="tbtn">⏮</button>
-            <button class="tbtn">◀</button>
-            <button class="tbtn primary" id="btn-play-a">▶</button>
-            <button class="tbtn">▶▶</button>
-            <button class="tbtn">⏭</button>
+            <button class="tbtn"><svg class="icon icon-sm"><use href="#i-back"/></svg></button>
+            <button class="tbtn"><svg class="icon icon-sm"><use href="#i-pause"/></svg></button>
+            <button class="tbtn primary" id="btn-play-a"><svg class="icon icon-sm"><use href="#i-play"/></svg></button>
+            <button class="tbtn"><svg class="icon icon-sm" style="transform:scaleX(-1)"><use href="#i-pause"/></svg></button>
+            <button class="tbtn"><svg class="icon icon-sm"><use href="#i-next"/></svg></button>
             <input class="time-input" value="00:00:18.240" />
-            <button class="btn btn-primary btn-sm" id="btn-export-a">导出音频</button>
+            <button class="btn btn-primary btn-sm" id="btn-export-a"><svg class="icon icon-sm"><use href="#i-download"/></svg> 导出音频</button>
           </div>
         </div>
       </div>
 
       <div class="grid-2">
         <div class="card">
-          <h3><span class="ico-sm">✂</span>截取 & 拼接</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-edit"/></svg> 截取 &amp; 拼接</h3>
           <div class="param-row">
             <div class="param-group"><label>起始时间</label><input class="param-input" value="00:00:05.000" /></div>
             <div class="param-group"><label>结束时间</label><input class="param-input" value="00:00:35.000" /></div>
@@ -1016,7 +1087,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
           </div>
         </div>
         <div class="card">
-          <h3><span class="ico-sm">🎚</span>音频调节</h3>
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-vol"/></svg> 音频调节</h3>
           <div class="param-group">
             <label>音量增益</label>
             <div class="slider-wrap">
@@ -1058,7 +1129,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
 </div>
 
 <!-- Toast -->
-<div class="toast" id="toast"><span class="tick">✓</span><span id="toast-text">已添加到任务队列</span></div>
+<div class="toast" id="toast"><span class="tick"><svg class="icon icon-sm"><use href="#i-check"/></svg></span><span id="toast-text">已添加到任务队列</span></div>
 
 <!-- =============== JAVASCRIPT =============== -->
 <script>
@@ -1141,8 +1212,8 @@ input, select, textarea { font-family: inherit; color: inherit; }
       </div>
       <select class="format-select">${fmtOpts(type, formats[type][0])}</select>
       <div class="file-actions">
-        <button class="icon-btn" title="预览">👁</button>
-        <button class="icon-btn" title="删除" data-remove>✕</button>
+        <button class="icon-btn" title="预览"><svg class="icon icon-sm"><use href="#i-eye"/></svg></button>
+        <button class="icon-btn" title="删除" data-remove><svg class="icon icon-sm"><use href="#i-clear"/></svg></button>
       </div>`;
     row.querySelector('[data-remove]').addEventListener('click', () => row.remove());
     list.appendChild(row);
@@ -1209,12 +1280,12 @@ input, select, textarea { font-family: inherit; color: inherit; }
       };
       const meta = t.status === 'done'
         ? `<span>${(Math.random()*3+1).toFixed(1)} MB · 已节省 ${Math.floor(30 + Math.random()*50)}%</span>
-           <span>↓ 打开</span>`
+           <span><svg class="icon icon-sm"><use href="#i-download"/></svg> 打开</span>`
         : t.status === 'run'
         ? `<span>${t.speed} KB/s</span><span>ETA ${Math.max(0, Math.ceil(t.eta))}s</span>`
         : t.status === 'err'
-        ? `<span>错误: 解码失败</span><span>↻ 重试</span>`
-        : `<span>队列第 ${tasks.indexOf(t)+1} 位</span><span>✕ 取消</span>`;
+        ? `<span>错误: 解码失败</span><span><svg class="icon icon-sm"><use href="#i-history"/></svg> 重试</span>`
+        : `<span>队列第 ${tasks.indexOf(t)+1} 位</span><span><svg class="icon icon-sm"><use href="#i-clear"/></svg> 取消</span>`;
       return `<div class="task" data-id="${t.id}">
         <div class="t-head"><div class="t-name">${t.name}</div>${statusMap[t.status]}</div>
         <div class="bar"><span style="width:${t.progress}%"></span></div>
@@ -1281,7 +1352,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
   }
   function renderHistory() {
     document.getElementById('history').innerHTML = hist.map(h =>
-      `<div class="history-item"><div class="hi-ico">↻</div>
+      `<div class="history-item"><div class="hi-ico"><svg class="icon icon-sm"><use href="#i-history"/></svg></div>
        <div class="hi-meta"><div>${h.name}</div><div>${h.time} · ${h.size}</div></div></div>`
     ).join('');
   }
@@ -1317,11 +1388,15 @@ input, select, textarea { font-family: inherit; color: inherit; }
   let pheadV = 35, pheadA = 8;
   document.getElementById('btn-play-v').addEventListener('click', e => {
     playingV = !playingV;
-    e.currentTarget.textContent = playingV ? '⏸' : '▶';
+    e.currentTarget.innerHTML = playingV
+      ? '<svg class="icon icon-sm"><use href="#i-pause"/></svg>'
+      : '<svg class="icon icon-sm"><use href="#i-play"/></svg>';
   });
   document.getElementById('btn-play-a').addEventListener('click', e => {
     playingA = !playingA;
-    e.currentTarget.textContent = playingA ? '⏸' : '▶';
+    e.currentTarget.innerHTML = playingA
+      ? '<svg class="icon icon-sm"><use href="#i-pause"/></svg>'
+      : '<svg class="icon icon-sm"><use href="#i-play"/></svg>';
   });
   document.getElementById('btn-export-v').addEventListener('click', () => {
     pushTask('导出视频 · product_final.mp4', 14);
