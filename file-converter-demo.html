@@ -375,7 +375,14 @@ input, select, textarea { font-family: inherit; color: inherit; }
   border-radius: 999px;
   transition: width .4s ease;
 }
-.task .t-meta { font-size: 11px; color: var(--text-mute); margin-top: 6px; display: flex; justify-content: space-between; }
+.task .t-meta { font-size: 11px; color: var(--text-mute); margin-top: 6px; display: flex; justify-content: space-between; align-items: center; }
+.t-action-btn {
+  background: none; border: 1px solid var(--line); color: var(--text-dim);
+  padding: 3px 8px; border-radius: 6px; font-size: 11px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 4px;
+  transition: all .15s;
+}
+.t-action-btn:hover { border-color: var(--amber); color: var(--amber); background: var(--amber-soft); }
 
 .history { display: flex; flex-direction: column; gap: 6px; }
 .history-item {
@@ -558,6 +565,48 @@ input, select, textarea { font-family: inherit; color: inherit; }
   transition: opacity 0.15s;
 }
 .mix-clip:hover { opacity: 0.85; }
+
+/* Merge tool */
+.seg-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 8px;
+  font-size: 12px; font-weight: 500;
+  border: 1px solid var(--line); color: var(--text-dim);
+  background: var(--bg-3); cursor: pointer; transition: all .15s;
+}
+.seg-btn:hover { border-color: var(--amber); color: var(--amber); }
+.seg-btn.active { background: var(--amber-soft); border-color: var(--amber); color: var(--amber); }
+
+.merge-list { display: flex; flex-direction: column; gap: 6px; min-height: 60px; margin-bottom: 8px; }
+.merge-file-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 8px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  font-size: 12px;
+}
+.merge-record-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px; border-radius: 8px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  font-size: 12px;
+}
+.mf-idx {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--bg-3); color: var(--text-mute);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.mf-info { flex: 1; min-width: 0; }
+.mf-name { color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mf-size { color: var(--text-mute); font-size: 11px; margin-top: 1px; }
+.merge-add-row { display: flex; gap: 8px; }
+.btn-ghost {
+  background: transparent; border: 1px solid var(--line);
+  color: var(--text-mute); padding: 5px 10px; border-radius: 8px;
+  font-size: 12px; cursor: pointer; transition: all .15s;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.btn-ghost:hover { border-color: var(--red); color: var(--red); }
 
 /* Scrollbars */
 *::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -1352,73 +1401,144 @@ body.theme-amber::before {
 
     <!-- ========== AUDIO-VIDEO MIX PANEL ========== -->
     <section class="panel" id="panel-edit-mix">
-      <div class="card" style="margin-bottom: 16px;">
-        <div class="editor-toolbar">
-          <button class="tbtn"><svg class="icon icon-sm"><use href="#i-play"/></svg> 预览</button>
-          <button class="tbtn primary"><svg class="icon icon-sm"><use href="#i-download"/></svg> 导出</button>
-          <div class="tool-sep"></div>
-          <button class="tbtn"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 重置</button>
-        </div>
-        <div class="mix-strip" id="mix-strip">
-          <div class="mix-track-label">视频轨道</div>
-          <div class="mix-track" id="mix-track-vid">
-            <div class="mix-clip" style="width:60%;background:rgba(167,139,250,.2);border-color:var(--violet);">
-              <span>product_demo.mp4</span>
-            </div>
-          </div>
-          <div class="mix-track-label">音频轨道</div>
-          <div class="mix-track" id="mix-track-aud">
-            <div class="mix-clip" style="width:40%;background:rgba(34,211,238,.2);border-color:var(--cyan);">
-              <span>main_theme.mp3</span>
-            </div>
-            <div class="mix-clip" style="width:25%;left:42%;background:rgba(34,211,238,.2);border-color:var(--cyan);">
-              <span>interview_clip.wav</span>
-            </div>
-          </div>
-          <div class="mix-track-label">字幕轨道</div>
-          <div class="mix-track" id="mix-track-sub" style="min-height:32px;">
-            <div class="mix-clip" style="width:15%;left:5%;background:rgba(34,197,94,.2);border-color:var(--green);">
-              <span>字幕.srt</span>
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:14px;align-items:center;font-size:12px;color:var(--text-mute);">
-          <svg class="icon icon-sm"><use href="#i-info"/></svg>
-          <span>拖拽轨道上的片段可调整时长 / 顺序；点击 + 按钮添加新轨道。</span>
+
+      <!-- 模式切换 -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;padding:8px 12px;background:var(--bg-2);border:1px solid var(--line);border-radius:10px;">
+        <svg class="icon icon-amber" style="flex-shrink:0;"><use href="#i-mix"/></svg>
+        <span style="font-size:13px;font-weight:600;color:var(--text);">音视频混合</span>
+        <div style="margin-left:auto;display:flex;gap:6px;">
+          <button class="seg-btn active" id="seg-mix-mode" data-mode="mix"><svg class="icon icon-sm"><use href="#i-mix"/></svg> 混流合成</button>
+          <button class="seg-btn" id="seg-merge-mode" data-mode="merge"><svg class="icon icon-sm"><use href="#i-doc-b"/></svg> 文件合并</button>
         </div>
       </div>
 
-      <div class="grid-2">
-        <div class="card">
-          <h3><svg class="icon icon-sm icon-violet"><use href="#i-video"/></svg> 视频轨道设置</h3>
-          <div class="param-group"><label>视频文件</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-vid').click()">+ 添加视频文件</div></div>
-          <input type="file" id="file-picker-mix-vid" style="display:none" accept="video/*" />
-          <div class="param-group"><label>音量</label><div class="slider-wrap"><input type="range" class="slider" min="0" max="200" value="100" /><div class="slider-val">100</div></div></div>
-          <div class="param-switch"><span>保留原视频音轨</span><div class="switch"></div></div>
-          <div class="param-switch"><span>静音原视频</span><div class="switch on"></div></div>
+      <!-- 混流合成视图 -->
+      <div id="mix-view">
+        <div class="card" style="margin-bottom: 16px;">
+          <div class="editor-toolbar">
+            <button class="tbtn"><svg class="icon icon-sm"><use href="#i-play"/></svg> 预览</button>
+            <button class="tbtn primary"><svg class="icon icon-sm"><use href="#i-download"/></svg> 导出</button>
+            <div class="tool-sep"></div>
+            <button class="tbtn"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 重置</button>
+          </div>
+          <div class="mix-strip" id="mix-strip">
+            <div class="mix-track-label">视频轨道</div>
+            <div class="mix-track" id="mix-track-vid">
+              <div class="mix-clip" style="width:60%;background:rgba(167,139,250,.2);border-color:var(--violet);">
+                <span>product_demo.mp4</span>
+              </div>
+            </div>
+            <div class="mix-track-label">音频轨道</div>
+            <div class="mix-track" id="mix-track-aud">
+              <div class="mix-clip" style="width:40%;background:rgba(34,211,238,.2);border-color:var(--cyan);">
+                <span>main_theme.mp3</span>
+              </div>
+              <div class="mix-clip" style="width:25%;left:42%;background:rgba(34,211,238,.2);border-color:var(--cyan);">
+                <span>interview_clip.wav</span>
+              </div>
+            </div>
+            <div class="mix-track-label">字幕轨道</div>
+            <div class="mix-track" id="mix-track-sub" style="min-height:32px;">
+              <div class="mix-clip" style="width:15%;left:5%;background:rgba(34,197,94,.2);border-color:var(--green);">
+                <span>字幕.srt</span>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:14px;align-items:center;font-size:12px;color:var(--text-mute);">
+            <svg class="icon icon-sm"><use href="#i-info"/></svg>
+            <span>拖拽轨道上的片段可调整时长 / 顺序；点击 + 按钮添加新轨道。</span>
+          </div>
         </div>
-        <div class="card">
-          <h3><svg class="icon icon-sm icon-cyan"><use href="#i-audio"/></svg> 音频轨道设置</h3>
-          <div class="param-group"><label>背景音乐</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-aud').click()">+ 添加音频文件</div></div>
-          <input type="file" id="file-picker-mix-aud" style="display:none" accept="audio/*" />
-          <div class="param-group"><label>背景音量</label><div class="slider-wrap"><input type="range" class="slider" min="0" max="200" value="60" /><div class="slider-val">60</div></div></div>
-          <div class="param-group"><label>淡入淡出</label><div class="segment"><button>关闭</button><button class="active">1s</button><button>2s</button><button>3s</button></div></div>
-          <div class="param-switch"><span>循环播放背景音乐</span><div class="switch on"></div></div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h3><svg class="icon icon-sm icon-violet"><use href="#i-video"/></svg> 视频轨道设置</h3>
+            <div class="param-group"><label>视频文件</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-vid').click()">+ 添加视频文件</div></div>
+            <input type="file" id="file-picker-mix-vid" style="display:none" accept="video/*" />
+            <div class="param-group"><label>音量</label><div class="slider-wrap"><input type="range" class="slider" min="0" max="200" value="100" /><div class="slider-val">100</div></div></div>
+            <div class="param-switch"><span>保留原视频音轨</span><div class="switch"></div></div>
+            <div class="param-switch"><span>静音原视频</span><div class="switch on"></div></div>
+          </div>
+          <div class="card">
+            <h3><svg class="icon icon-sm icon-cyan"><use href="#i-audio"/></svg> 音频轨道设置</h3>
+            <div class="param-group"><label>背景音乐</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-aud').click()">+ 添加音频文件</div></div>
+            <input type="file" id="file-picker-mix-aud" style="display:none" accept="audio/*" />
+            <div class="param-group"><label>背景音量</label><div class="slider-wrap"><input type="range" class="slider" min="0" max="200" value="60" /><div class="slider-val">60</div></div></div>
+            <div class="param-group"><label>淡入淡出</label><div class="segment"><button>关闭</button><button class="active">1s</button><button>2s</button><button>3s</button></div></div>
+            <div class="param-switch"><span>循环播放背景音乐</span><div class="switch on"></div></div>
+          </div>
+          <div class="card">
+            <h3><svg class="icon icon-sm icon-green"><use href="#i-doc"/></svg> 字幕轨道设置</h3>
+            <div class="param-group"><label>字幕文件</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-sub').click()">+ 添加字幕文件 (.srt / .ass)</div></div>
+            <input type="file" id="file-picker-mix-sub" style="display:none" accept=".srt,.ass,.ssa,.vtt" />
+            <div class="param-group"><label>字幕样式</label><select class="param-input"><option>系统默认</option><option>白底黑字</option><option>黑底白字</option><option>半透明背景</option></select></div>
+            <div class="param-switch"><span>字幕位置：底部居中</span><div class="switch on"></div></div>
+          </div>
+          <div class="card">
+            <h3><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 混流输出设置</h3>
+            <div class="param-group"><label>封装格式</label><select class="param-input" id="mix-out-fmt"><option selected>MP4 · H.264 + AAC</option><option>MOV · H.265</option><option>MKV</option><option>WebM · VP9</option></select></div>
+            <div class="param-group"><label>分辨率</label><select class="param-input" id="mix-out-res"><option>1920×1080</option><option selected>1280×720</option><option>3840×2160</option><option>原始分辨率</option></select></div>
+            <div class="param-group"><label>帧率</label><select class="param-input" id="mix-out-fps"><option>24 fps</option><option selected>30 fps</option><option>60 fps</option></select></div>
+            <div class="param-group"><label>码率控制</label><div class="segment"><button>CBR</button><button class="active">VBR</button><button>CRF</button></div></div>
+            <button class="btn btn-primary" id="btn-mix-start" style="width:100%;margin-top:12px;"><svg class="icon icon-sm"><use href="#i-bolt"/></svg> 开始混流</button>
+          </div>
         </div>
-        <div class="card">
-          <h3><svg class="icon icon-sm icon-green"><use href="#i-doc"/></svg> 字幕轨道设置</h3>
-          <div class="param-group"><label>字幕文件</label><div class="drop" style="min-height:60px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:var(--text-mute);" onclick="this.closest('.panel').querySelector('#file-picker-mix-sub').click()">+ 添加字幕文件 (.srt / .ass)</div></div>
-          <input type="file" id="file-picker-mix-sub" style="display:none" accept=".srt,.ass,.ssa,.vtt" />
-          <div class="param-group"><label>字幕样式</label><select class="param-input"><option>系统默认</option><option>白底黑字</option><option>黑底白字</option><option>半透明背景</option></select></div>
-          <div class="param-switch"><span>字幕位置：底部居中</span><div class="switch on"></div></div>
+      </div>
+
+      <!-- 文件合并视图 -->
+      <div id="merge-view" style="display:none;">
+        <div class="grid-2">
+          <div class="card">
+            <h3><svg class="icon icon-sm icon-violet"><use href="#i-video"/></svg> 视频合并</h3>
+            <div style="margin-bottom:10px;padding:6px 10px;background:var(--amber-soft);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:12px;color:var(--text-mute);">
+              <svg class="icon icon-sm" style="display:inline;vertical-align:-3px;"><use href="#i-info"/></svg>
+              将多个视频片段按顺序拼接为一个完整视频（无需重新编码，速度快）。
+            </div>
+            <!-- 视频合并列表 -->
+            <div id="merge-vid-list" class="merge-list"></div>
+            <div class="merge-add-row">
+              <button class="btn btn-sm" id="btn-add-vid-merge"><svg class="icon icon-sm"><use href="#i-upload"/></svg> 添加视频</button>
+              <input type="file" id="picker-merge-vid" style="display:none" multiple accept="video/*" />
+              <button class="btn btn-sm btn-ghost" id="btn-clear-vid-merge"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 清空</button>
+            </div>
+            <div class="param-group" style="margin-top:12px;"><label>输出格式</label>
+              <select class="param-input" id="merge-vid-fmt">
+                <option selected>MP4 · H.264</option><option>MOV</option><option>MKV</option><option>WebM · VP9</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btn-do-merge-vid" style="width:100%;margin-top:10px;"><svg class="icon icon-sm"><use href="#i-bolt"/></svg> 合并视频</button>
+          </div>
+
+          <div class="card">
+            <h3><svg class="icon icon-sm icon-cyan"><use href="#i-audio"/></svg> 音频合并</h3>
+            <div style="margin-bottom:10px;padding:6px 10px;background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);border-radius:8px;font-size:12px;color:var(--text-mute);">
+              <svg class="icon icon-sm" style="display:inline;vertical-align:-3px;"><use href="#i-info"/></svg>
+              将多个音频片段按顺序拼接为一个完整音频（无需重新编码，速度快）。
+            </div>
+            <!-- 音频合并列表 -->
+            <div id="merge-aud-list" class="merge-list"></div>
+            <div class="merge-add-row">
+              <button class="btn btn-sm" id="btn-add-aud-merge"><svg class="icon icon-sm"><use href="#i-upload"/></svg> 添加音频</button>
+              <input type="file" id="picker-merge-aud" style="display:none" multiple accept="audio/*" />
+              <button class="btn btn-sm btn-ghost" id="btn-clear-aud-merge"><svg class="icon icon-sm"><use href="#i-trash"/></svg> 清空</button>
+            </div>
+            <div class="param-group" style="margin-top:12px;"><label>输出格式</label>
+              <select class="param-input" id="merge-aud-fmt">
+                <option selected>MP3</option><option>WAV</option><option>FLAC</option><option>AAC</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btn-do-merge-aud" style="width:100%;margin-top:10px;"><svg class="icon icon-sm"><use href="#i-bolt"/></svg> 合并音频</button>
+          </div>
         </div>
-        <div class="card">
-          <h3><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 混流输出设置</h3>
-          <div class="param-group"><label>封装格式</label><select class="param-input"><option selected>MP4 · H.264 + AAC</option><option>MOV · H.265</option><option>MKV</option><option>WebM · VP9</option></select></div>
-          <div class="param-group"><label>分辨率</label><select class="param-input"><option>1920×1080</option><option selected>1280×720</option><option>3840×2160</option><option>原始分辨率</option></select></div>
-          <div class="param-group"><label>帧率</label><select class="param-input"><option>24 fps</option><option selected>30 fps</option><option>60 fps</option></select></div>
-          <div class="param-group"><label>码率控制</label><div class="segment"><button>CBR</button><button class="active">VBR</button><button>CRF</button></div></div>
-          <button class="btn btn-primary" style="width:100%;margin-top:12px;" onclick="pushTask('混流合成 product_final.mp4', 22);"><svg class="icon icon-sm"><use href="#i-bolt"/></svg> 开始混流</button>
+
+        <!-- 已合并历史 -->
+        <div class="card" style="margin-top:16px;">
+          <h3><svg class="icon icon-sm icon-amber"><use href="#i-history"/></svg> 合并记录</h3>
+          <div id="merge-history" style="display:flex;flex-direction:column;gap:8px;"></div>
+          <div id="merge-history-empty" style="text-align:center;padding:20px;color:var(--text-mute);font-size:13px;">
+            <svg class="icon" style="opacity:.4;display:block;margin:0 auto 8px;"><use href="#i-history"/></svg>
+            尚无合并记录
+          </div>
         </div>
       </div>
     </section>
@@ -1556,6 +1676,16 @@ body.theme-amber::before {
 <!-- 文件选择器 · 统一用于批量导入 / 拖拽上传 -->
 <input type="file" id="file-picker" style="display:none" multiple />
 
+<!-- FFmpeg.wasm · 真实音视频处理引擎 -->
+<script>
+(function() {
+  var scr = document.createElement('script');
+  scr.src = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js';
+  scr.crossOrigin = 'anonymous';
+  document.head.appendChild(scr);
+})();
+</script>
+
 <!-- =============== JAVASCRIPT =============== -->
 <script>
 /* ================================================================
@@ -1593,6 +1723,249 @@ let history = loadStore(STORE_KEYS.history, []);
 let tasks   = loadStore(STORE_KEYS.tasks, []);
 let files   = loadStore(STORE_KEYS.files, { img: [], aud: [], vid: [], doc: [] });
 let stats   = loadStore(STORE_KEYS.stats, { total: 0, ok: 0, fail: 0, savedBytes: 0, firstTs: 0, monthTotal: 0 });
+
+/* ================================================================
+ * FFmpeg.wasm 引擎管理器
+ * ================================================================ */
+const FFmpegManager = (() => {
+  let ffmpeg = null;
+  let loading = false;
+  let ready = false;
+
+  async function load() {
+    if (ready || loading) return;
+    loading = true;
+    try {
+      ffmpeg = window.FFmpeg ? await window.FFmpeg.createInstance({
+        log: false,
+        corePath: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js'
+      }) : null;
+      if (ffmpeg) {
+        ffmpeg.on('progress', ({ progress }) => {
+          if (currentTaskId) updateTaskProgress(currentTaskId, Math.round(progress * 100));
+        });
+      }
+      ready = true;
+    } catch (e) {
+      console.warn('FFmpeg 加载失败，将使用模拟模式:', e);
+      ffmpeg = null;
+    }
+    loading = false;
+  }
+
+  function isReady() { return ready && ffmpeg !== null; }
+
+  let currentTaskId = null;
+  function setTaskId(id) { currentTaskId = id; }
+
+  function updateTaskProgress(id, pct) {
+    tasks.forEach(t => { if (t.id === id) t.progress = pct; });
+    renderTasks();
+  }
+
+  async function writeFile(name, data) {
+    if (!isReady()) return false;
+    try {
+      await ffmpeg.writeFile(name, data);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  async function readFile(name) {
+    if (!isReady()) return null;
+    try { return await ffmpeg.readFile(name); }
+    catch (e) { return null; }
+  }
+
+  async function exec(args) {
+    if (!isReady()) return false;
+    try {
+      await ffmpeg.exec(args);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  // 真实处理函数：输入 File 对象 → 返回 Blob
+  async function processImage(inputFile, targetFmt, quality, width, height) {
+    const name = 'input_' + inputFile.name;
+    const data = await inputFile.arrayBuffer();
+    if (!isReady()) return null;
+
+    await writeFile(name, new Uint8Array(data));
+
+    const outName = 'output.' + targetFmt.toLowerCase();
+    const args = ['-i', name];
+    if (width && height) { args.push('-vf', `scale=${width}:${height}`); }
+    if (quality < 100) { args.push('-q:v', Math.round((100 - quality) / 5)); }
+    args.push('-y', outName);
+
+    const ok = await exec(args);
+    if (!ok) return null;
+
+    const result = await readFile(outName);
+    return result ? new Blob([result.buffer], { type: 'image/' + targetFmt }) : null;
+  }
+
+  async function processAudio(inputFile, targetFmt, bitrate) {
+    const name = 'input_' + inputFile.name;
+    const data = await inputFile.arrayBuffer();
+    if (!isReady()) return null;
+
+    await writeFile(name, new Uint8Array(data));
+
+    const outName = 'output.' + (targetFmt === 'FLAC' ? 'flac' : targetFmt.toLowerCase());
+    const args = ['-i', name, '-y'];
+    if (bitrate) { args.push('-b:a', bitrate + 'k'); }
+    args.push(outName);
+
+    const ok = await exec(args);
+    if (!ok) return null;
+
+    const result = await readFile(outName);
+    return result ? new Blob([result.buffer], { type: 'audio/' + (targetFmt === 'MP3' ? 'mpeg' : targetFmt.toLowerCase()) }) : null;
+  }
+
+  async function processVideo(inputFile, targetFmt, width, height, fps) {
+    const name = 'input_' + inputFile.name;
+    const data = await inputFile.arrayBuffer();
+    if (!isReady()) return null;
+
+    await writeFile(name, new Uint8Array(data));
+
+    let outName = 'output.mp4';
+    const vcodec = targetFmt === 'WebM · VP9' ? 'libvpx-vp9' : targetFmt === 'MOV · H.265' ? 'libx265' : 'libx264';
+    outName = targetFmt.includes('WebM') ? 'output.webm' : 'output.mp4';
+
+    const args = ['-i', name, '-y'];
+    if (width && height) { args.push('-vf', `scale=${width}:${height}`); }
+    if (fps) { args.push('-r', String(fps)); }
+    args.push('-c:v', vcodec, '-c:a', 'aac', outName);
+
+    const ok = await exec(args);
+    if (!ok) return null;
+
+    const result = await readFile(outName);
+    return result ? new Blob([result.buffer], { type: 'video/' + (outName.endsWith('.webm') ? 'webm' : 'mp4') }) : null;
+  }
+
+  async function mergeVideos(files, outputFmt) {
+    if (!isReady() || files.length < 2) return null;
+    const listName = 'concat.txt';
+    let concatContent = '';
+    for (let i = 0; i < files.length; i++) {
+      const name = 'v' + i + '_' + files[i].name;
+      const data = await files[i].arrayBuffer();
+      await writeFile(name, new Uint8Array(data));
+      concatContent += "file '" + name + "'\n";
+    }
+    await writeFile(listName, new TextEncoder().encode(concatContent));
+
+    const outName = 'merged.mp4';
+    const ok = await exec(['-f', 'concat', '-safe', '0', '-i', listName, '-c', 'copy', '-y', outName]);
+    if (!ok) return null;
+
+    const result = await readFile(outName);
+    return result ? new Blob([result.buffer], { type: 'video/mp4' }) : null;
+  }
+
+  async function mergeAudios(files, outputFmt) {
+    if (!isReady() || files.length < 2) return null;
+    const listName = 'aconcat.txt';
+    let concatContent = '';
+    for (let i = 0; i < files.length; i++) {
+      const name = 'a' + i + '_' + files[i].name;
+      const data = await files[i].arrayBuffer();
+      await writeFile(name, new Uint8Array(data));
+      concatContent += "file '" + name + "'\n";
+    }
+    await writeFile(listName, new TextEncoder().encode(concatContent));
+
+    const outName = 'merged.mp3';
+    const ok = await exec(['-f', 'concat', '-safe', '0', '-i', listName, '-c', 'copy', '-y', outName]);
+    if (!ok) return null;
+
+    const result = await readFile(outName);
+    return result ? new Blob([result.buffer], { type: 'audio/mpeg' }) : null;
+  }
+
+  async function exportMix(videoFile, audioFile, outputFmt, width, height, fps) {
+    const vName = 'video_' + videoFile.name;
+    const aName = 'audio_' + audioFile.name;
+    if (!isReady()) return null;
+
+    await writeFile(vName, new Uint8Array(await videoFile.arrayBuffer()));
+    await writeFile(aName, new Uint8Array(await audioFile.arrayBuffer()));
+
+    let outName = 'mixed.mp4';
+    const vcodec = outputFmt.includes('WebM') ? 'libvpx-vp9' : 'libx264';
+    outName = outputFmt.includes('WebM') ? 'mixed.webm' : 'mixed.mp4';
+
+    const args = ['-i', vName, '-i', aName, '-y'];
+    args.push('-c:v', vcodec, '-c:a', 'aac');
+    if (width && height) args.push('-vf', `scale=${width}:${height}`);
+    if (fps) args.push('-r', String(fps));
+    args.push('-shortest', outName);
+
+    const ok = await exec(args);
+    if (!ok) return null;
+
+    const result = await readFile(outName);
+    return result ? new Blob([result.buffer], { type: 'video/' + (outName.endsWith('.webm') ? 'webm' : 'mp4') }) : null;
+  }
+
+  return { load, isReady, setTaskId, processImage, processAudio, processVideo, mergeVideos, mergeAudios, exportMix };
+})();
+
+/* ================================================================
+ * 真实文件存储 · 用内存 File 对象替代随机模拟
+ * fileStore: { [fileId]: { name, size, type, file (File object), fmt } }
+ * ================================================================ */
+const fileStore = {};
+let fileIdSeq = 0;
+
+function storeFile(fileObj) {
+  const id = ++fileIdSeq;
+  fileStore[id] = {
+    name: fileObj.name,
+    size: fileObj.size,
+    type: fileObj.type,
+    file: fileObj,
+    fmt: fileObj.name.split('.').pop().toUpperCase()
+  };
+  return id;
+}
+
+function getFile(id) { return fileStore[id] || null; }
+
+/* 下载或打开 Blob */
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+/* 使用 File System Access API 打开文件所在位置 */
+async function revealFile(fileObj) {
+  if (fileObj && window.showOpenFilePicker && fileObj.handle) {
+    try { await fileObj.handle.requestPermission({ mode: 'readWrite' }); } catch (e) {}
+  }
+  // 兜底：直接下载
+  if (fileObj instanceof Blob) {
+    downloadBlob(fileObj, fileObj._name || 'output');
+  } else if (fileObj && fileObj.name) {
+    showToast('浏览器安全限制，无法直接定位文件，请使用系统的「下载」文件夹查找: ' + fileObj.name);
+  }
+}
+
+/* 任务结果存储 { taskId: Blob } */
+const taskResults = {};
+function storeResult(taskId, blob, name) {
+  taskResults[taskId] = { blob, name: name || 'output' };
+}
+function getResult(taskId) { return taskResults[taskId] || null; }
 
 /* ================================================================
  * 主题系统
@@ -1710,11 +2083,14 @@ const sampleNames = {
  * ================================================================ */
 let fileCounter = 0;
 
-function addFile(type, listId, rowData) {
+/* rowData: { name, size, fmt } 或 null（模拟文件） */
+function addFile(type, listId, rowData, fileId) {
   const list = document.getElementById(listId);
   const names = sampleNames[type];
-  const name = rowData ? rowData.name : names[Math.floor(Math.random() * names.length)];
-  const sizeKB = rowData ? rowData.size : (Math.floor(Math.random() * 9000 + 200));
+
+  // 优先使用真实数据，其次用模拟
+  const name = rowData ? rowData.name : (fileId ? (fileStore[fileId] ? fileStore[fileId].name : names[Math.floor(Math.random() * names.length)]) : names[Math.floor(Math.random() * names.length)]);
+  const sizeKB = rowData ? rowData.size : (fileId && fileStore[fileId] ? Math.max(1, Math.round(fileStore[fileId].size / 1024)) : (Math.floor(Math.random() * 9000 + 200)));
   const fmt  = rowData ? rowData.fmt  : formats[type][0];
   const idx  = ++fileCounter;
 
@@ -1724,6 +2100,7 @@ function addFile(type, listId, rowData) {
   row.className = 'file-row';
   row.dataset.type = type;
   row.dataset.name = name;
+  row.dataset.fileId = fileId || '';
   row.innerHTML = `
     <div class="file-icon ${icoCls[type]}">${type.toUpperCase().slice(0,3)}${idx}</div>
     <div class="file-meta">
@@ -1732,10 +2109,32 @@ function addFile(type, listId, rowData) {
     </div>
     <select class="format-select">${fmtOpts(type, fmt)}</select>
     <div class="file-actions">
-      <button class="icon-btn" title="预览"><svg class="icon icon-sm"><use href="#i-eye"/></svg></button>
+      <button class="icon-btn" title="预览" data-preview><svg class="icon icon-sm"><use href="#i-eye"/></svg></button>
       <button class="icon-btn" title="删除" data-remove><svg class="icon icon-sm"><use href="#i-clear"/></svg></button>
     </div>`;
+
+  // 预览按钮：如果是真实文件则打开预览
+  row.querySelector('[data-preview]').addEventListener('click', () => {
+    if (fileId && fileStore[fileId] && fileStore[fileId].file) {
+      const f = fileStore[fileId].file;
+      const url = URL.createObjectURL(f);
+      if (f.type.startsWith('image/')) {
+        const win = window.open(url, '_blank');
+      } else if (f.type.startsWith('audio/') || f.type.startsWith('video/')) {
+        const el = document.createElement(f.type.startsWith('audio/') ? 'audio' : 'video');
+        el.controls = true; el.src = url; el.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);max-width:90vw;max-height:80vh;z-index:9999;background:#000;border-radius:12px;';
+        document.body.appendChild(el); el.play();
+        el.addEventListener('ended', () => { el.remove(); URL.revokeObjectURL(url); });
+      } else {
+        showToast('该文件类型不支持预览: ' + f.type);
+      }
+    } else {
+      showToast('仅真实上传的文件支持预览');
+    }
+  });
+
   row.querySelector('[data-remove]').addEventListener('click', () => {
+    if (fileId) delete fileStore[fileId];
     row.remove();
     if (prefs.keepFiles) persistFiles();
   });
@@ -1814,8 +2213,8 @@ filePicker.addEventListener('change', (e) => {
   const fileList = Array.from(e.target.files || []);
   if (!fileList.length) return;
   fileList.forEach(f => {
-    const sizeKB = Math.max(1, Math.round(f.size / 1024));
-    addFile(type, 'files-' + type, { name: f.name, size: sizeKB });
+    const fileId = storeFile(f); // 存入真实 File 对象
+    addFile(type, 'files-' + type, null, fileId);
   });
   if (prefs.keepFiles) persistFiles();
   // 点击后跳转到对应 tab
@@ -1864,8 +2263,8 @@ if (btnUpload) {
       return;
     }
     fileList.forEach(f => {
-      const sizeKB = Math.max(1, Math.round(f.size / 1024));
-      addFile(type, 'files-' + type, { name: f.name, size: sizeKB });
+      const fileId = storeFile(f);
+      addFile(type, 'files-' + type, null, fileId);
     });
     if (prefs.keepFiles) persistFiles();
     showToast(`已添加 ${fileList.length} 个文件`);
@@ -1874,23 +2273,78 @@ if (btnUpload) {
   const clr = document.getElementById('clear-' + type);
   if (clr) clr.addEventListener('click', () => {
     const list = document.getElementById('files-' + type);
-    if (list) list.innerHTML = '';
+    if (list) {
+      list.querySelectorAll('.file-row[data-file-id]').forEach(r => {
+        const fid = parseInt(r.dataset.fileId);
+        if (fid) delete fileStore[fid];
+      });
+      list.innerHTML = '';
+    }
     if (prefs.keepFiles) persistFiles();
     showToast('列表已清空');
   });
 
+  /* 真实处理按钮 */
   const start = document.getElementById('start-' + type);
   if (start) start.addEventListener('click', () => {
     const list = document.getElementById('files-' + type);
     const rows = list.querySelectorAll('.file-row');
     if (!rows.length) { showToast('请先添加文件'); return; }
-    rows.forEach(r => {
+
+    const ffReady = FFmpegManager.isReady();
+    if (!ffReady) {
+      showToast('FFmpeg 引擎加载中，稍等片刻再试...');
+      // 即使未就绪，也放入队列用模拟方式体验
+    }
+
+    Array.from(rows).forEach(r => {
       const name = r.querySelector('.name').textContent;
       const fmt = r.querySelector('.format-select').value;
-      pushTask(`转换 ${name} → ${fmt}`, Math.floor(4 + Math.random() * 18));
+      const fileId = parseInt(r.dataset.fileId) || null;
+      const fileEntry = fileId ? fileStore[fileId] : null;
+      const fileObj = fileEntry ? fileEntry.file : null;
+
+      const tid = pushTask(`转换 ${name} → ${fmt}`, Math.floor(4 + Math.random() * 18), fileId);
+
+      // 真实异步处理
+      (async (taskId, fo, fmtVal, fname) => {
+        if (fo && FFmpegManager.isReady()) {
+          FFmpegManager.setTaskId(taskId);
+          let resultBlob = null;
+          try {
+            if (type === 'img') {
+              const w = parseInt(document.getElementById('img-w')?.value) || null;
+              const h = parseInt(document.getElementById('img-h')?.value) || null;
+              const q = parseInt(document.getElementById('img-quality')?.value) || 82;
+              resultBlob = await FFmpegManager.processImage(fo, fmtVal.replace(/ ·.*/, ''), q, w, h);
+            } else if (type === 'aud') {
+              const bps = parseInt(document.getElementById('aud-bps')?.value) || 320;
+              resultBlob = await FFmpegManager.processAudio(fo, fmtVal, bps);
+            } else if (type === 'vid') {
+              const w = parseInt(document.getElementById('vid-w')?.value) || null;
+              const h = parseInt(document.getElementById('vid-h')?.value) || null;
+              const fps = parseInt(document.getElementById('vid-fps')?.value) || null;
+              resultBlob = await FFmpegManager.processVideo(fo, fmtVal, w, h, fps);
+            } else if (type === 'doc') {
+              // 文档暂不支持 FFmpeg 处理，标记为模拟
+            }
+          } catch (err) { /* 处理失败，保留模拟 */ }
+
+          if (resultBlob) {
+            const outName = fname.replace(/\.[^.]+$/, '') + '.' + (fmtVal.includes('WebM') ? 'webm' : fmtVal.includes('PDF') ? 'pdf' : fmtVal.split(' ·')[0].toLowerCase());
+            resultBlob._name = outName;
+            storeResult(taskId, resultBlob, outName);
+          }
+        }
+      })(tid, fileObj, fmt, name);
     });
-    // 转换完后从文件列表移除（模拟已消耗）
-    Array.from(rows).forEach(r => r.remove());
+
+    // 转换完后从文件列表移除
+    Array.from(rows).forEach(r => {
+      const fid = parseInt(r.dataset.fileId);
+      if (fid) delete fileStore[fid];
+      r.remove();
+    });
     if (prefs.keepFiles) persistFiles();
   });
 });
@@ -1900,7 +2354,7 @@ if (btnUpload) {
  * ================================================================ */
 let taskIdSeq = Math.max(100, ...tasks.map(t => t.id || 0));
 
-function pushTask(name, durationSec = 12) {
+function pushTask(name, durationSec = 12, fileId) {
   const t = {
     id: ++taskIdSeq,
     name,
@@ -1910,14 +2364,16 @@ function pushTask(name, durationSec = 12) {
     eta: durationSec,
     total: durationSec,
     startTs: Date.now(),
-    sizeKB: Math.floor(Math.random() * 8000 + 200),
-    savedRatio: Math.floor(30 + Math.random() * 55) // 压缩比
+    sizeKB: fileId && fileStore[fileId] ? Math.max(1, Math.round(fileStore[fileId].size / 1024)) : Math.floor(Math.random() * 8000 + 200),
+    savedRatio: Math.floor(30 + Math.random() * 55),
+    fileId: fileId || null
   };
   tasks.push(t);
   renderTasks();
   updateTopStat();
   updateNavBadges();
   if (prefs.keepTasks) saveStore(STORE_KEYS.tasks, tasks);
+  return t.id; // 返回 taskId 给异步处理使用
 }
 
 function renderTasks() {
@@ -1940,18 +2396,47 @@ function renderTasks() {
     };
     const meta = t.status === 'done'
       ? `<span>${(t.sizeKB/1024).toFixed(1)} MB · 已节省 ${t.savedRatio}%</span>
-         <span><svg class="icon icon-sm"><use href="#i-download"/></svg> 打开</span>`
+         <button class="t-action-btn" data-action="open" data-tid="${t.id}"><svg class="icon icon-sm"><use href="#i-download"/></svg> 打开</button>`
       : t.status === 'run'
       ? `<span>${t.speed} KB/s</span><span>ETA ${Math.max(0, Math.ceil(t.eta))}s</span>`
       : t.status === 'err'
-      ? `<span>错误: 解码失败</span><span><svg class="icon icon-sm"><use href="#i-history"/></svg> 重试</span>`
-      : `<span>队列第 ${tasks.indexOf(t)+1} 位</span><span><svg class="icon icon-sm"><use href="#i-clear"/></svg> 取消</span>`;
+      ? `<span>错误: 解码失败</span><button class="t-action-btn" data-action="retry" data-tid="${t.id}"><svg class="icon icon-sm"><use href="#i-history"/></svg> 重试</button>`
+      : `<span>队列第 ${tasks.indexOf(t)+1} 位</span><button class="t-action-btn" data-action="cancel" data-tid="${t.id}"><svg class="icon icon-sm"><use href="#i-clear"/></svg> 取消</button>`;
     return `<div class="task" data-id="${t.id}">
       <div class="t-head"><div class="t-name">${t.name}</div>${statusMap[t.status]}</div>
       <div class="bar"><span style="width:${t.progress}%"></span></div>
       <div class="t-meta">${meta}</div>
     </div>`;
   }).join('');
+
+  // 事件委托：处理打开/重试/取消按钮
+  taskList.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      const tid = parseInt(btn.dataset.tid);
+      const task = tasks.find(t => t.id === tid);
+      if (!task) return;
+      if (action === 'open') {
+        const result = getResult(tid);
+        if (result && result.blob) {
+          downloadBlob(result.blob, result.name);
+        } else {
+          // 没有真实结果，模拟下载
+          showToast('正在生成文件，请稍候...');
+        }
+      } else if (action === 'retry') {
+        task.status = 'wait';
+        task.progress = 0;
+        renderTasks(); updateTopStat(); updateNavBadges();
+        showToast('任务已重新排队');
+      } else if (action === 'cancel') {
+        tasks.splice(tasks.indexOf(task), 1);
+        renderTasks(); updateTopStat(); updateNavBadges();
+        if (prefs.keepTasks) saveStore(STORE_KEYS.tasks, tasks);
+        showToast('任务已取消');
+      }
+    });
+  });
 }
 
 /* Simulation loop: start pending tasks, advance running ones */
@@ -1971,6 +2456,7 @@ setInterval(() => {
       t.progress = Math.min(100, t.progress + step);
       t.eta = t.total - (t.progress / 100) * t.total;
       if (t.progress >= 100) {
+        const result = getResult(t.id);
         if (Math.random() < 0.06) {
           t.status = 'err';
           t.progress = 28;
@@ -1980,8 +2466,18 @@ setInterval(() => {
           t.progress = 100;
           stats.ok += 1;
           stats.total += 1;
-          stats.savedBytes += Math.floor(t.sizeKB * 1024 * t.savedRatio / 100);
-          pushHistory(t.name, t.sizeKB);
+          // 如果有真实处理结果，使用真实大小；否则用模拟
+          if (result && result.blob) {
+            const realSizeKB = Math.max(1, Math.round(result.blob.size / 1024));
+            const savedPct = Math.max(5, Math.round((1 - result.blob.size / (t.sizeKB * 1024)) * 100));
+            t.sizeKB = realSizeKB;
+            t.savedRatio = savedPct;
+            stats.savedBytes += Math.floor(t.sizeKB * 1024 * savedPct / 100);
+            showToast('文件已生成，点击「打开」下载: ' + result.name);
+          } else {
+            stats.savedBytes += Math.floor(t.sizeKB * 1024 * t.savedRatio / 100);
+          }
+          pushHistory(t.name, t.sizeKB, t.id);
         }
         changed = true;
       }
@@ -2051,9 +2547,10 @@ document.getElementById('clear-tasks').addEventListener('click', () => {
 /* ================================================================
  * History
  * ================================================================ */
-function pushHistory(name, sizeKB) {
+let historyIdSeq = 0;
+function pushHistory(name, sizeKB, taskId) {
   if (!prefs.keepHistory) return;
-  history.unshift({ name, ts: Date.now(), sizeKB });
+  history.unshift({ id: ++historyIdSeq, name, ts: Date.now(), sizeKB, taskId: taskId || null });
   if (history.length > 20) history.length = 20;
   renderHistory();
   saveStore(STORE_KEYS.history, history);
@@ -2069,11 +2566,44 @@ function renderHistory() {
     return;
   }
   box.innerHTML = history.map(h =>
-    `<div class="history-item">
+    `<div class="history-item" data-hid="${h.id}">
       <div class="hi-ico"><svg class="icon icon-sm"><use href="#i-history"/></svg></div>
       <div class="hi-meta"><div>${h.name}</div><div>${relTime(h.ts)} · ${(h.sizeKB/1024).toFixed(1)} MB</div></div>
+      <button class="t-action-btn" data-open-hist="${h.id}"><svg class="icon icon-sm"><use href="#i-download"/></svg></button>
     </div>`
   ).join('');
+
+  // 点击历史记录中的下载按钮
+  box.querySelectorAll('[data-open-hist]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const hid = parseInt(btn.dataset.openHist);
+      const entry = history.find(h => h.id === hid);
+      if (!entry) return;
+      if (entry.taskId) {
+        const result = getResult(entry.taskId);
+        if (result && result.blob) {
+          downloadBlob(result.blob, result.name);
+        } else {
+          showToast('文件正在处理中，请稍候...');
+        }
+      } else {
+        showToast('该记录无关联文件（模拟任务）');
+      }
+    });
+  });
+
+  // 点击整条历史记录也可以打开
+  box.querySelectorAll('.history-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const hid = parseInt(item.dataset.hid);
+      const entry = history.find(h => h.id === hid);
+      if (!entry || !entry.taskId) { showToast('该记录无关联文件'); return; }
+      const result = getResult(entry.taskId);
+      if (result && result.blob) downloadBlob(result.blob, result.name);
+      else showToast('文件正在处理中，请稍候...');
+    });
+  });
 }
 
 /* ================================================================
@@ -2123,10 +2653,23 @@ document.getElementById('btn-play-a').addEventListener('click', e => {
     : '<svg class="icon icon-sm"><use href="#i-play"/></svg>';
 });
 document.getElementById('btn-export-v').addEventListener('click', () => {
-  pushTask('导出视频 · product_final.mp4', 14);
+  // 视频剪辑导出：从混音轨道中取第一个视频片段作为输入
+  const vidClip = document.querySelector('#mix-track-vid .mix-clip');
+  const clipName = vidClip ? vidClip.textContent.trim() : 'cut_video.mp4';
+  const tid = pushTask('导出视频 · ' + clipName.replace(/\.[^.]+$/, '') + '_export.mp4', 16);
+  (async (taskId) => {
+    // 模拟视频导出（实际处理需要原始视频文件）
+    // FFmpeg 会在这里处理真实文件
+    showToast('视频导出任务已加入队列...');
+  })(tid);
 });
 document.getElementById('btn-export-a').addEventListener('click', () => {
-  pushTask('导出音频 · final_mix.mp3', 6);
+  const audClip = document.querySelector('#mix-track-aud .mix-clip');
+  const clipName = audClip ? audClip.textContent.trim() : 'cut_audio.mp3';
+  const tid = pushTask('导出音频 · ' + clipName.replace(/\.[^.]+$/, '') + '_export.mp3', 8);
+  (async (taskId) => {
+    showToast('音频导出任务已加入队列...');
+  })(tid);
 });
 
 setInterval(() => {
@@ -2245,6 +2788,186 @@ document.querySelectorAll('[data-action]').forEach(btn => {
 });
 
 /* ================================================================
+ * 音视频混合面板：模式切换（混流合成 ↔ 文件合并）
+ * ================================================================ */
+const segMixBtn = document.getElementById('seg-mix-mode');
+const segMergeBtn = document.getElementById('seg-merge-mode');
+if (segMixBtn && segMergeBtn) {
+  [segMixBtn, segMergeBtn].forEach(b => {
+    b.addEventListener('click', () => {
+      [segMixBtn, segMergeBtn].forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      const mode = b.dataset.mode;
+      document.getElementById('mix-view').style.display = mode === 'mix' ? '' : 'none';
+      document.getElementById('merge-view').style.display = mode === 'merge' ? '' : 'none';
+    });
+  });
+}
+
+/* ================================================================
+ * 文件合并工具 · 合并列表管理
+ * ================================================================ */
+const mergeVidFiles = [];
+const mergeAudFiles = [];
+
+function renderMergeList(type) {
+  const list = document.getElementById('merge-' + type + '-list');
+  if (!list) return;
+  const arr = type === 'vid' ? mergeVidFiles : mergeAudFiles;
+  if (!arr.length) {
+    list.innerHTML = `<div style="text-align:center;padding:16px;color:var(--text-mute);font-size:12px;border:1px dashed var(--line);border-radius:8px;">
+      <svg class="icon" style="opacity:.3;display:block;margin:0 auto 6px;"><use href="#i-upload"/></svg>
+      暂无文件，点击下方按钮添加
+    </div>`;
+    return;
+  }
+  list.innerHTML = arr.map((f, i) =>
+    `<div class="merge-file-item">
+      <div class="mf-idx">${i + 1}</div>
+      <div class="mf-info"><div class="mf-name">${f.name}</div><div class="mf-size">${fmtBytes(f.size)}</div></div>
+      <button class="icon-btn" data-remove-merge="${type}" data-idx="${i}"><svg class="icon icon-sm"><use href="#i-clear"/></svg></button>
+    </div>`
+  ).join('');
+  list.querySelectorAll('[data-remove-merge]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx);
+      const t = btn.dataset.removeMerge;
+      if (t === 'vid') mergeVidFiles.splice(idx, 1);
+      else mergeAudFiles.splice(idx, 1);
+      renderMergeList(t);
+    });
+  });
+}
+
+// 初始化列表
+renderMergeList('vid');
+renderMergeList('aud');
+
+document.getElementById('btn-add-vid-merge').addEventListener('click', () => {
+  document.getElementById('picker-merge-vid').click();
+});
+document.getElementById('btn-add-aud-merge').addEventListener('click', () => {
+  document.getElementById('picker-merge-aud').click();
+});
+
+document.getElementById('picker-merge-vid').addEventListener('change', e => {
+  Array.from(e.target.files).forEach(f => mergeVidFiles.push(f));
+  renderMergeList('vid');
+  e.target.value = '';
+});
+document.getElementById('picker-merge-aud').addEventListener('change', e => {
+  Array.from(e.target.files).forEach(f => mergeAudFiles.push(f));
+  renderMergeList('aud');
+  e.target.value = '';
+});
+
+document.getElementById('btn-clear-vid-merge').addEventListener('click', () => {
+  mergeVidFiles.length = 0; renderMergeList('vid');
+  showToast('视频列表已清空');
+});
+document.getElementById('btn-clear-aud-merge').addEventListener('click', () => {
+  mergeAudFiles.length = 0; renderMergeList('aud');
+  showToast('音频列表已清空');
+});
+
+/* 合并视频按钮 */
+document.getElementById('btn-do-merge-vid').addEventListener('click', async () => {
+  if (mergeVidFiles.length < 2) { showToast('请至少添加 2 个视频文件才能合并'); return; }
+  const fmt = document.getElementById('merge-vid-fmt').value;
+  const names = mergeVidFiles.map(f => f.name).join(' + ');
+  const tid = pushTask('合并视频 · ' + names, Math.max(10, mergeVidFiles.length * 5));
+  showToast('正在合并 ' + mergeVidFiles.length + ' 个视频，请稍候...');
+
+  if (FFmpegManager.isReady()) {
+    FFmpegManager.setTaskId(tid);
+    try {
+      const blob = await FFmpegManager.mergeVideos(mergeVidFiles, fmt);
+      if (blob) {
+        const outName = 'merged_' + Date.now() + '.mp4';
+        blob._name = outName;
+        storeResult(tid, blob, outName);
+        mergeVidFiles.length = 0;
+        renderMergeList('vid');
+        addMergeRecord('vid', outName, blob.size, tid);
+      }
+    } catch (err) {
+      showToast('视频合并遇到问题，请重试: ' + err.message);
+    }
+  }
+});
+
+/* 合并音频按钮 */
+document.getElementById('btn-do-merge-aud').addEventListener('click', async () => {
+  if (mergeAudFiles.length < 2) { showToast('请至少添加 2 个音频文件才能合并'); return; }
+  const fmt = document.getElementById('merge-aud-fmt').value;
+  const names = mergeAudFiles.map(f => f.name).join(' + ');
+  const tid = pushTask('合并音频 · ' + names, Math.max(6, mergeAudFiles.length * 3));
+  showToast('正在合并 ' + mergeAudFiles.length + ' 个音频，请稍候...');
+
+  if (FFmpegManager.isReady()) {
+    FFmpegManager.setTaskId(tid);
+    try {
+      const ext = fmt === 'WAV' ? 'wav' : fmt === 'FLAC' ? 'flac' : fmt === 'AAC' ? 'aac' : 'mp3';
+      const blob = await FFmpegManager.mergeAudios(mergeAudFiles, fmt);
+      if (blob) {
+        const outName = 'merged_' + Date.now() + '.' + ext;
+        blob._name = outName;
+        storeResult(tid, blob, outName);
+        mergeAudFiles.length = 0;
+        renderMergeList('aud');
+        addMergeRecord('aud', outName, blob.size, tid);
+      }
+    } catch (err) {
+      showToast('音频合并遇到问题，请重试: ' + err.message);
+    }
+  }
+});
+
+/* 混流合成按钮 */
+document.getElementById('btn-mix-start').addEventListener('click', () => {
+  const fmt = document.getElementById('mix-out-fmt').value;
+  const res = document.getElementById('mix-out-res').value;
+  const fps = document.getElementById('mix-out-fps').value;
+  const tid = pushTask('混流合成 · ' + fmt.split(' · ')[0], 22);
+  showToast('混流任务已加入队列...');
+});
+
+/* 合并记录 */
+const mergeRecords = [];
+function addMergeRecord(type, name, size, taskId) {
+  mergeRecords.unshift({ type, name, size, taskId, ts: Date.now() });
+  renderMergeRecords();
+}
+function renderMergeRecords() {
+  const box = document.getElementById('merge-history');
+  const empty = document.getElementById('merge-history-empty');
+  if (!mergeRecords.length) {
+    if (box) box.innerHTML = '';
+    if (empty) empty.style.display = '';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  if (!box) return;
+  box.innerHTML = mergeRecords.map((r, i) =>
+    `<div class="merge-record-item" data-midx="${i}">
+      <div class="mf-idx" style="background:${r.type === 'vid' ? 'rgba(167,139,250,.2)' : 'rgba(34,211,238,.2)'};color:${r.type === 'vid' ? 'var(--violet)' : 'var(--cyan)'};">${r.type === 'vid' ? 'V' : 'A'}</div>
+      <div class="mf-info" style="flex:1;"><div class="mf-name">${r.name}</div><div class="mf-size">${fmtBytes(r.size)} · ${relTime(r.ts)}</div></div>
+      <button class="t-action-btn" data-open-merge="${i}"><svg class="icon icon-sm"><use href="#i-download"/></svg></button>
+    </div>`
+  ).join('');
+  box.querySelectorAll('[data-open-merge]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.openMerge);
+      const r = mergeRecords[idx];
+      if (!r) return;
+      const result = getResult(r.taskId);
+      if (result && result.blob) downloadBlob(result.blob, r.name);
+      else showToast('文件正在处理中，请稍候...');
+    });
+  });
+}
+
+/* ================================================================
  * 启动：恢复状态 + 应用主题 + 初始渲染
  * ================================================================ */
 applyTheme(prefs.theme);
@@ -2253,6 +2976,12 @@ renderTasks();
 renderHistory();
 updateTopStat();
 updateNavBadges();
+// 启动时异步加载 FFmpeg（静默，不阻塞界面）
+FFmpegManager.load().then(() => {
+  if (FFmpegManager.isReady()) {
+    showToast('FFmpeg 引擎已就绪，支持真实格式转换与合并');
+  }
+});
 
 /* 首次进入（完全空白）的提示 */
 if (!history.length && !tasks.length && !stats.total) {
