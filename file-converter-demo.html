@@ -9,16 +9,10 @@
    RESET & TOKENS
    ========================================================= */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* =========================================================
+   通用颜色（与主题无关）· 强调色 / 尺寸 / 阴影
+   ========================================================= */
 :root {
-  --bg-0: #0b0d12;
-  --bg-1: #11141c;
-  --bg-2: #161a24;
-  --bg-3: #1d2230;
-  --line: #262c3c;
-  --line-2: #323a4e;
-  --text: #e7ecf5;
-  --text-dim: #9aa4b8;
-  --text-mute: #6b7489;
   --amber: #f59e0b;
   --amber-2: #fbbf24;
   --cyan: #22d3ee;
@@ -28,7 +22,6 @@
   --pink: #f472b6;
   --radius: 14px;
   --radius-sm: 9px;
-  --shadow: 0 10px 40px -12px rgba(0,0,0,.6), 0 2px 6px -2px rgba(0,0,0,.5);
 }
 html, body { height: 100%; }
 body {
@@ -67,7 +60,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 24px;
   border-bottom: 1px solid var(--line);
-  background: rgba(17,20,28,.7);
+  background: var(--bg-1);
   backdrop-filter: blur(10px);
 }
 .brand { display: flex; align-items: center; gap: 12px; }
@@ -78,7 +71,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
   box-shadow: 0 0 0 1px rgba(255,255,255,.06), 0 8px 24px -8px rgba(245,158,11,.5);
 }
 .brand-mark span {
-  width: 26px; height: 26px; border-radius: 7px; background: #11141c;
+  width: 26px; height: 26px; border-radius: 7px; background: var(--bg-1);
   display: grid; place-items: center; font-weight: 800; font-size: 14px;
   color: var(--amber-2); letter-spacing: -.5px;
 }
@@ -136,7 +129,8 @@ input, select, textarea { font-family: inherit; color: inherit; }
    ========================================================= */
 .sidebar {
   border-right: 1px solid var(--line);
-  padding: 18px 14px; background: rgba(11,13,18,.4);
+  padding: 18px 14px;
+  background: var(--bg-1);
 }
 .nav-group-title {
   font-size: 11px; color: var(--text-mute); text-transform: uppercase;
@@ -357,7 +351,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
    ========================================================= */
 .rightbar {
   border-left: 1px solid var(--line);
-  background: rgba(11,13,18,.4);
+  background: var(--bg-1);
   padding: 18px 16px;
   display: flex; flex-direction: column; gap: 14px;
 }
@@ -540,7 +534,7 @@ input, select, textarea { font-family: inherit; color: inherit; }
 *::-webkit-scrollbar { width: 8px; height: 8px; }
 *::-webkit-scrollbar-track { background: transparent; }
 *::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 999px; }
-*::-webkit-scrollbar-thumb:hover { background: #46506a; }
+*::-webkit-scrollbar-thumb:hover { background: var(--line-2); opacity: 1; }
 
 /* Toast */
 .toast {
@@ -599,71 +593,82 @@ input, select, textarea { font-family: inherit; color: inherit; }
   pointer-events: none;
 }
 
-/* ===================== Theme Variables ===================== */
+/* =========================================================
+   主题变量 · 统一使用 --bg-0 / --bg-1 / --bg-2 / --bg-3 / --line / --line-2
+   ========================================================= */
+
 /* 深色主题 (默认) */
-:root, body.theme-dark {
-  --bg: #0f1115;
-  --bg-2: #151822;
-  --panel: #1a1f2b;
-  --panel-2: #1e2432;
-  --border: #262c3b;
-  --text: #e6e9f2;
-  --text-dim: #a0a6b8;
-  --text-mute: #6b7289;
+body.theme-dark {
+  --bg-0: #0b0d12;
+  --bg-1: #11141c;
+  --bg-2: #161a24;
+  --bg-3: #1d2230;
+  --line: #262c3c;
+  --line-2: #323a4e;
+  --text: #e7ecf5;
+  --text-dim: #9aa4b8;
+  --text-mute: #6b7489;
   --amber: #f59e0b;
-  --amber-2: #ffb74d;
+  --amber-2: #fbbf24;
   --amber-soft: rgba(245, 158, 11, 0.14);
   --success: #10b981;
   --danger: #ef4444;
   --info: #60a5fa;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --shadow: 0 10px 40px -12px rgba(0,0,0,.6), 0 2px 6px -2px rgba(0,0,0,.35);
 }
 
 /* 浅色主题 */
 body.theme-light {
-  --bg: #f5f7fb;
-  --bg-2: #ffffff;
-  --panel: #ffffff;
-  --panel-2: #f7f9fc;
-  --border: #e3e8f0;
-  --text: #1f2937;
-  --text-dim: #4b5563;
-  --text-mute: #8b95a8;
+  --bg-0: #eef1f7;
+  --bg-1: #ffffff;
+  --bg-2: #f6f8fc;
+  --bg-3: #e9eef6;
+  --line: #d4dbe8;
+  --line-2: #b8c2d6;
+  --text: #1a2033;
+  --text-dim: #5a647a;
+  --text-mute: #8a94a8;
   --amber: #ea8a00;
   --amber-2: #ff9f43;
   --amber-soft: rgba(234, 138, 0, 0.12);
   --success: #059669;
   --danger: #dc2626;
   --info: #2563eb;
-  --shadow: 0 8px 24px rgba(30, 41, 59, 0.08);
+  --shadow: 0 8px 24px -8px rgba(30, 41, 59, 0.15), 0 2px 6px -2px rgba(30, 41, 59, 0.06);
 }
 
 /* 琥珀主题 */
 body.theme-amber {
-  --bg: #1a120b;
-  --bg-2: #271b0f;
-  --panel: #32241a;
-  --panel-2: #3d2c1e;
-  --border: #5a4028;
-  --text: #fff2d8;
-  --text-dim: #d9b98a;
-  --text-mute: #a07a55;
+  --bg-0: #140e07;
+  --bg-1: #1f160d;
+  --bg-2: #2a1e11;
+  --bg-3: #3a2a17;
+  --line: #4e3a20;
+  --line-2: #6a4e2b;
+  --text: #fff5dd;
+  --text-dim: #d4b98a;
+  --text-mute: #9b7e50;
   --amber: #ffb956;
   --amber-2: #ffd59e;
   --amber-soft: rgba(255, 185, 86, 0.22);
   --success: #34d399;
   --danger: #f87171;
   --info: #93c5fd;
-  --shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  --shadow: 0 10px 40px -12px rgba(0,0,0,.7), 0 2px 6px -2px rgba(0,0,0,.4);
 }
 
-/* 应用到已存在的元素（确保变量传递） */
-body.theme-light .sidebar,
-body.theme-light .main,
-body.theme-light .right-bar { background: var(--bg-2); border-color: var(--border); }
-body.theme-amber .sidebar,
-body.theme-amber .main,
-body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--border); }
+/* body 背景在主题内统一 */
+body { background: var(--bg-0); }
+body.theme-light { background: linear-gradient(180deg, #f2f5fa 0%, #e9eef6 100%); }
+body.theme-amber { background: linear-gradient(180deg, #140e07 0%, #1a120b 100%); }
+
+/* body 装饰网格 · 深色模式下显示，浅色模式下隐藏 */
+body.theme-light::before { display: none; }
+body.theme-amber::before {
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+}
 
 /* ===================== Modal 对话框 ===================== */
 .modal {
@@ -681,9 +686,9 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
   position: relative; z-index: 1;
   width: min(640px, 92vw);
   max-height: 88vh;
-  background: var(--panel);
+  background: var(--bg-1);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   border-radius: 14px;
   box-shadow: var(--shadow);
   display: flex; flex-direction: column;
@@ -694,14 +699,14 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
 .modal-head {
   padding: 16px 20px;
   display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--line);
 }
 .modal-head h3 { margin: 0; font-size: 16px; font-weight: 600; }
 .modal-content { padding: 20px; overflow-y: auto; font-size: 14px; }
 .modal-foot {
   padding: 14px 20px;
   display: flex; align-items: center; justify-content: flex-end; gap: 10px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--line);
 }
 
 /* ===================== 对话框分区 & 标题 ===================== */
@@ -721,10 +726,10 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
 }
 .theme-card {
-  border: 1.5px solid var(--border);
+  border: 1.5px solid var(--line);
   border-radius: 10px;
   padding: 10px;
-  background: var(--panel-2);
+  background: var(--bg-2);
   cursor: pointer;
   transition: all 0.15s ease;
   display: flex; flex-direction: column; align-items: stretch; gap: 8px;
@@ -739,13 +744,13 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
 }
 .theme-preview {
   height: 72px; border-radius: 8px;
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   overflow: hidden;
   position: relative;
 }
-.theme-preview-dark { background: linear-gradient(180deg, #1e2432 0%, #0f1115 100%); }
+.theme-preview-dark { background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-0) 100%); }
 .theme-preview-light { background: linear-gradient(180deg, #ffffff 0%, #eef1f6 100%); }
-.theme-preview-amber { background: linear-gradient(180deg, #3d2c1e 0%, #1a120b 100%); }
+.theme-preview-amber { background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-0) 100%); }
 .tp-bar {
   height: 12px; width: 100%;
   background: linear-gradient(90deg, var(--amber) 0%, var(--amber-2) 100%);
@@ -754,7 +759,7 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
 .tp-body { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
 .tp-blk {
   height: 8px;
-  background: var(--border);
+  background: var(--line);
   border-radius: 3px;
   opacity: 0.8;
 }
@@ -765,8 +770,8 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
 .toggle-row {
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px 14px;
-  background: var(--panel-2);
-  border: 1px solid var(--border);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
   border-radius: 10px;
   margin-bottom: 8px;
 }
@@ -780,21 +785,21 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
 }
 .btn-danger {
   background: transparent;
-  border: 1px solid var(--danger);
-  color: var(--danger);
+  border: 1px solid var(--red);
+  color: var(--red);
 }
 .btn-danger:hover {
-  background: var(--danger);
+  background: var(--red);
   color: white;
 }
-.btn-primary.btn-danger:hover { background: var(--danger); }
+.btn-primary.btn-danger:hover { background: var(--red); }
 
 /* ===================== Toast ===================== */
 .toast {
   position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-16px);
-  background: var(--panel);
+  background: var(--bg-1);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 1px solid var(--line);
   padding: 10px 16px;
   border-radius: 10px;
   box-shadow: var(--shadow);
@@ -809,8 +814,8 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
 /* ===================== 小屏自适应 ===================== */
 @media (max-width: 960px) {
   .app { grid-template-columns: 1fr; }
-  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
-  .right-bar { border-left: none; border-top: 1px solid var(--border); }
+  .sidebar { border-right: none; border-bottom: 1px solid var(--line); }
+  .rightbar { border-left: none; border-top: 1px solid var(--line); }
   .danger-actions { grid-template-columns: 1fr; }
   .theme-picker { grid-template-columns: 1fr; }
 }
@@ -917,9 +922,8 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
         <p>拖拽文件到下方区域，或选择预设参数一键转换 / 剪辑</p>
       </div>
       <div class="quick">
-        <button class="btn btn-sm"><svg class="icon icon-sm"><use href="#i-upload"/></svg> 批量导入</button>
-        <button class="btn btn-sm"><svg class="icon icon-sm"><use href="#i-cog"/></svg> 设置</button>
-        <button class="btn btn-sm" id="btn-settings-dlg"><svg class="icon icon-sm icon-amber"><use href="#i-cog"/></svg> 偏好设置</button>
+        <button class="btn btn-sm" id="btn-upload"><svg class="icon icon-sm"><use href="#i-upload"/></svg> 批量导入</button>
+        <button class="btn btn-sm" id="btn-settings-dlg"><svg class="icon icon-sm"><use href="#i-cog"/></svg> 设置</button>
       </div>
     </div>
 
@@ -1353,8 +1357,8 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
   <div class="modal-body">
     <div class="modal-head">
       <div style="display:flex; align-items:center; gap:10px;">
-        <svg class="icon icon-amber"><use href="#i-cog"/></svg>
-        <h3>偏好设置</h3>
+        <svg class="icon"><use href="#i-cog"/></svg>
+        <h3>设置</h3>
       </div>
       <button class="icon-btn" data-close-dlg><svg class="icon icon-sm"><use href="#i-clear"/></svg></button>
     </div>
@@ -1454,6 +1458,9 @@ body.theme-amber .right-bar { background: var(--bg-2); border-color: var(--borde
     </div>
   </div>
 </div>
+
+<!-- 文件选择器 · 统一用于批量导入 / 拖拽上传 -->
+<input type="file" id="file-picker" style="display:none" multiple />
 
 <!-- =============== JAVASCRIPT =============== -->
 <script>
@@ -1613,9 +1620,11 @@ function addFile(type, listId, rowData) {
   const list = document.getElementById(listId);
   const names = sampleNames[type];
   const name = rowData ? rowData.name : names[Math.floor(Math.random() * names.length)];
-  const size = rowData ? rowData.size : (Math.floor(Math.random() * 9000 + 200)); // KB
+  const sizeKB = rowData ? rowData.size : (Math.floor(Math.random() * 9000 + 200));
   const fmt  = rowData ? rowData.fmt  : formats[type][0];
   const idx  = ++fileCounter;
+
+  const sizeText = sizeKB >= 1024 ? (sizeKB / 1024).toFixed(1) + ' MB' : sizeKB + ' KB';
 
   const row = document.createElement('div');
   row.className = 'file-row';
@@ -1625,7 +1634,7 @@ function addFile(type, listId, rowData) {
     <div class="file-icon ${icoCls[type]}">${type.toUpperCase().slice(0,3)}${idx}</div>
     <div class="file-meta">
       <div class="name">${name}</div>
-      <div class="info">${size} KB · ${meta[type]}</div>
+      <div class="info">${sizeText} · ${meta[type]}</div>
     </div>
     <select class="format-select">${fmtOpts(type, fmt)}</select>
     <div class="file-actions">
@@ -1670,25 +1679,102 @@ function restoreFiles() {
   });
 }
 
-/* Drop zone / add button click = add a file */
+/* ================================================================
+ * 工具：判断当前激活的转换面板（用于批量导入时的类型归属）
+ * ================================================================ */
+function getActiveTabType() {
+  // 按 tab 激活状态判断；如果不是转换面板（比如剪辑面板），则回到第一个转换面板
+  const activePanel = document.querySelector('.panel.active');
+  if (!activePanel) return 'img';
+  const id = activePanel.id;
+  if (id === 'panel-image') return 'img';
+  if (id === 'panel-audio') return 'aud';
+  if (id === 'panel-video') return 'vid';
+  if (id === 'panel-document') return 'doc';
+  // 剪辑/其他面板时，默认添加到图片
+  return 'img';
+}
+
+/* ================================================================
+ * 真实文件选择器逻辑
+ * ================================================================ */
+const filePicker = document.getElementById('file-picker');
+
+function openFilePicker(type) {
+  // 为不同类型设置合适的 accept
+  if (!filePicker) return;
+  const acceptMap = {
+    img: 'image/*',
+    aud: 'audio/*',
+    vid: 'video/*',
+    doc: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.md'
+  };
+  filePicker.accept = acceptMap[type] || '';
+  // 清除 value 以便同一文件可再次选中
+  filePicker.value = '';
+  filePicker.click();
+}
+
+filePicker.addEventListener('change', (e) => {
+  const type = filePicker.dataset.targetType || getActiveTabType();
+  const fileList = Array.from(e.target.files || []);
+  if (!fileList.length) return;
+  fileList.forEach(f => {
+    const sizeKB = Math.max(1, Math.round(f.size / 1024));
+    addFile(type, 'files-' + type, { name: f.name, size: sizeKB });
+  });
+  if (prefs.keepFiles) persistFiles();
+  // 点击后跳转到对应 tab
+  const panelMap = { img: 'image', aud: 'audio', vid: 'video', doc: 'document' };
+  switchTab(panelMap[type]);
+  showToast(`已添加 ${fileList.length} 个文件`);
+});
+
+/* 顶部"批量导入"按钮 - 按当前活动 tab 决定类型 */
+const btnUpload = document.getElementById('btn-upload');
+if (btnUpload) {
+  btnUpload.addEventListener('click', () => {
+    const t = getActiveTabType();
+    filePicker.dataset.targetType = t;
+    openFilePicker(t);
+  });
+}
+
+/* Drop zone · 点击 = 打开系统文件选择器 · 拖拽 = 读取真实文件 */
 ['img','aud','vid','doc'].forEach(type => {
   const drop = document.getElementById('drop-' + type);
   if (!drop) return;
-  drop.addEventListener('click', () => {
-    const n = 1 + Math.floor(Math.random() * 2);
-    for (let i = 0; i < n; i++) {
-      addFile(type, 'files-' + type);
-      if (prefs.keepFiles) persistFiles();
-    }
+
+  drop.addEventListener('click', (e) => {
+    // 避免子元素再次触发（比如内部的提示文字）
+    if (e.target.closest('[data-action]')) return;
+    filePicker.dataset.targetType = type;
+    openFilePicker(type);
   });
-  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('drag'); }));
-  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('drag'); }));
+
+  ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); e.stopPropagation();
+    drop.classList.add('drag');
+  }));
+  ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => {
+    e.preventDefault(); e.stopPropagation();
+    drop.classList.remove('drag');
+  }));
   drop.addEventListener('drop', e => {
-    const n = 2 + Math.floor(Math.random() * 2);
-    for (let i = 0; i < n; i++) {
-      addFile(type, 'files-' + type);
+    const fileList = Array.from(e.dataTransfer.files || []);
+    if (!fileList.length) {
+      // 没拖到文件，做一个模拟以保持演示体验
+      const n = 1 + Math.floor(Math.random() * 2);
+      for (let i = 0; i < n; i++) addFile(type, 'files-' + type);
       if (prefs.keepFiles) persistFiles();
+      return;
     }
+    fileList.forEach(f => {
+      const sizeKB = Math.max(1, Math.round(f.size / 1024));
+      addFile(type, 'files-' + type, { name: f.name, size: sizeKB });
+    });
+    if (prefs.keepFiles) persistFiles();
+    showToast(`已添加 ${fileList.length} 个文件`);
   });
 
   const clr = document.getElementById('clear-' + type);
